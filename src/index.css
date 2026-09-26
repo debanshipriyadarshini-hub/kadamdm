@@ -101,3 +101,53 @@ footer { background:var(--brown); color:var(--cream); padding:85px clamp(22px,6v
 @media(max-width:900px) { .navbar { gap:20px; }.nav-links { gap:16px; }.nav-links button { font-size:9px; }.nav-links button:last-child { padding-left:16px; }.product-grid { gap:30px 14px; }.story-strip { grid-template-columns:1fr 1fr; }.story-strip > div:first-child { grid-column:span 2; }.story-copy { justify-self:center; }.footer-top { grid-template-columns:1fr 1fr; }.footer-links { grid-column:span 2; }.art-preview-grid { grid-template-columns:repeat(3,1fr); }.art-spread,.art-spread.image-right { grid-template-columns:1fr; gap:30px; }.art-spread-image { height:420px; }.art-spread.image-right .art-spread-image { order:0; } }
 @media(max-width:680px) { body { font-size:13px; }.announcement { font-size:8px; }.navbar { height:64px; padding:0 18px; justify-content:space-between; }.mobile-menu { display:grid; order:-1; }.nav-links { display:none; position:absolute; top:64px; left:0; right:0; padding:25px 22px; background:var(--cream); border-bottom:1px solid var(--line); flex-direction:column; align-items:flex-start; gap:20px; }.nav-links.open { display:flex; }.nav-links button:last-child { border-left:0; padding-left:0; }.nav-actions { gap:7px; }.hide-mobile { display:none; }.theme-toggle { display:none; }.wordmark { font-size:18px; }.hero { display:flex; flex-direction:column; min-height:0; }.hero-copy { padding:72px 25px 55px; }.hero-copy h1 { font-size:68px; }.hero-note { position:static; margin-top:70px; }.hero-visual { min-height:420px; height:58vh; }.hero-orbit { width:110vw; height:110vw; top:5%; left:-8%; }.section { padding:75px 20px; }.section-heading { display:block; margin-bottom:38px; }.heading-side { margin-top:28px; }.product-grid,.shop-grid { grid-template-columns:1fr 1fr; gap:34px 11px; }.product-info { display:block; }.product-info > strong { display:block; margin-top:8px; }.product-info h3 { font-size:10px; }.product-info p { font-size:9px; }.product-meta { font-size:9px; }.quick-add { display:none; }.product-index { font-size:8px; }.art-sneaker,.custom-tease,.lookbook-tease,.product-detail,.custom-layout,.philosophy,.checkout-layout { display:flex; flex-direction:column; }.art-spread,.art-spread.image-right { grid-template-columns:1fr; gap:25px; padding:60px 0; }.art-spread-image { height:320px; margin:0 0; }.art-spread.image-right .art-spread-image { order:0; }.art-spread-copy { padding:10px 0; }.art-spread-sneaker .collection-image { width:90px; height:100px; }.art-preview-grid { grid-template-columns:repeat(2,1fr); gap:22px; }.art-sneaker-image { min-height:360px; }.art-sneaker-copy { padding:70px 25px; }.process { gap:8px; }.custom-copy { padding:75px 25px; }.custom-swatch { min-height:420px; }.lookbook-image img { min-height:450px; }.lookbook-copy { padding:70px 25px; }.story-strip { display:flex; flex-direction:column; align-items:stretch; padding:75px 25px; }.story-strip > div:first-child { order:0; }.story-image { height:360px; }.story-copy { align-self:center; max-width:280px; margin-top:10px; }.final-cta { padding:100px 20px; }.page-shell { padding:50px 20px 90px; }.page-hero { padding-bottom:55px; }.page-hero h1 { font-size:68px; }.shop-toolbar { align-items:flex-start; flex-direction:column; }.sort-select { width:100%; justify-content:space-between; }.editorial-page { padding-left:20px; padding-right:20px; }.dark-hero { margin-left:-20px; margin-right:-20px; padding-left:20px; padding-right:20px; }.story-row { grid-template-columns:30px 1fr; gap:15px; padding:60px 0; }.story-art { grid-column:2; height:310px; }.story-row-copy { grid-column:2; padding:0; }.story-number { grid-row:span 2; }.lookbook-hero { height:78vh; min-height:500px; }.lookbook-hero h1 { font-size:65px; }.lookbook-intro { display:block; padding:55px 25px; }.lookbook-intro span { display:block; margin-top:25px; }.lookbook-mosaic { display:flex; flex-direction:column; padding:0 15px; }.lookbook-mosaic img,.lookbook-mosaic img:nth-child(3) { height:360px; }.lookbook-mosaic img:nth-child(2) { margin-top:0; }.mosaic-quote { min-height:270px; }.timeline-item { grid-template-columns:45px 1fr; gap:15px; }.timeline-item:not(.last):after { left:12px; }.timeline-item h2 { font-size:38px; }.philosophy { gap:50px; }.custom-preview { min-height:500px; }.custom-shoe.large { transform:rotate(-11deg) scale(1.1); }.product-detail-copy { padding:35px 0 0; }.product-detail-copy h1 { font-size:57px; }.product-tabs { margin-top:70px; gap:20px; }.product-tabs > button { font-size:9px; }.gallery-thumbs button { width:65px; height:65px; }.full-cart { display:flex; flex-direction:column; gap:50px; }.cart-summary { width:100%; }.cart-line { grid-template-columns:72px 1fr auto; gap:12px; }.cart-line img { width:72px; height:82px; }.line-price { font-size:10px; }.checkout-layout { gap:50px; }.form-grid { grid-template-columns:1fr; }.form-grid label:first-child { grid-column:auto; }.checkout-summary { order:-1; }.payment-options { flex-direction:column; gap:16px; }.footer-top { display:flex; flex-direction:column; gap:55px; }.footer-links { display:grid; grid-template-columns:1fr 1fr; gap:35px; }.footer-links div:last-child { grid-column:span 2; }.footer-bottom { flex-direction:column; gap:12px; }.drawer-backdrop .cart-drawer { padding:23px; }.drawer-heading h2 { font-size:30px; } }
 @media(prefers-reduced-motion:reduce) { *,*:before,*:after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+
+.hero-visual .hero-lifestyle { mix-blend-mode:normal; }
+.search-results button { justify-content:flex-start; gap:12px; }
+.search-results button img { flex:0 0 48px; width:48px; height:52px; object-fit:contain; background:#e1d4c0; mix-blend-mode:multiply; }
+.search-results .search-result-copy { display:flex; flex:1; flex-direction:column; gap:4px; }
+.search-results .search-result-copy strong { color:var(--brown); font-size:10px; font-weight:500; letter-spacing:.08em; }
+.search-results .search-result-copy small { color:var(--muted); font-size:10px; }
+.search-results button > svg { color:var(--muted); }
+.product-image img.collection-image.dhara,
+.product-image img.collection-image.rang,
+.product-image img.collection-image.van,
+.product-image img.collection-image.chitra,
+.product-image img.collection-image.rooh,
+.product-image img.collection-image.signature,
+.gallery-main img.collection-image.dhara,
+.gallery-main img.collection-image.rang,
+.gallery-main img.collection-image.van,
+.gallery-main img.collection-image.chitra,
+.gallery-main img.collection-image.rooh,
+.gallery-main img.collection-image.signature {
+	position:static;
+	width:100%;
+	height:100%;
+	max-width:100%;
+	object-fit:contain;
+	transform:none;
+}
+.product-card:hover .product-image img.collection-image.dhara,
+.product-card:hover .product-image img.collection-image.rang,
+.product-card:hover .product-image img.collection-image.van,
+.product-card:hover .product-image img.collection-image.chitra,
+.product-card:hover .product-image img.collection-image.rooh,
+.product-card:hover .product-image img.collection-image.signature {
+	transform:scale(1.02);
+}
+.gallery-thumbs img { mix-blend-mode:normal; }
+.cart-line img { object-fit:contain; transform:none; }
+.art-spread-sneaker img.collection-image.dhara,
+.art-spread-sneaker img.collection-image.rang,
+.art-spread-sneaker img.collection-image.van,
+.art-spread-sneaker img.collection-image.chitra,
+.art-spread-sneaker img.collection-image.rooh,
+.art-spread-sneaker img.collection-image.signature {
+	position:relative;
+	width:120px;
+	height:130px;
+	max-width:100%;
+	object-fit:contain;
+	transform:none;
+}
