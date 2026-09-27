@@ -115,17 +115,28 @@ footer { background:var(--brown); color:var(--cream); padding:85px clamp(22px,6v
 .product-image img.collection-image.chitra,
 .product-image img.collection-image.rooh,
 .product-image img.collection-image.signature,
+.product-image img.collection-image.surya,
+.product-image img.collection-image.floral,
+.product-image img.collection-image.shiva,
+.product-image img.collection-image.forest,
+.product-image img.collection-image.monsoon,
 .gallery-main img.collection-image.dhara,
 .gallery-main img.collection-image.rang,
 .gallery-main img.collection-image.van,
 .gallery-main img.collection-image.chitra,
 .gallery-main img.collection-image.rooh,
-.gallery-main img.collection-image.signature {
+.gallery-main img.collection-image.signature,
+.gallery-main img.collection-image.surya,
+.gallery-main img.collection-image.floral,
+.gallery-main img.collection-image.shiva,
+.gallery-main img.collection-image.forest,
+.gallery-main img.collection-image.monsoon {
 	position:static;
 	width:100%;
 	height:100%;
 	max-width:100%;
 	object-fit:contain;
+	object-position:center;
 	transform:none;
 }
 .product-card:hover .product-image img.collection-image.dhara,
@@ -133,7 +144,12 @@ footer { background:var(--brown); color:var(--cream); padding:85px clamp(22px,6v
 .product-card:hover .product-image img.collection-image.van,
 .product-card:hover .product-image img.collection-image.chitra,
 .product-card:hover .product-image img.collection-image.rooh,
-.product-card:hover .product-image img.collection-image.signature {
+.product-card:hover .product-image img.collection-image.signature,
+.product-card:hover .product-image img.collection-image.surya,
+.product-card:hover .product-image img.collection-image.floral,
+.product-card:hover .product-image img.collection-image.shiva,
+.product-card:hover .product-image img.collection-image.forest,
+.product-card:hover .product-image img.collection-image.monsoon {
 	transform:scale(1.02);
 }
 .gallery-thumbs img { mix-blend-mode:normal; }

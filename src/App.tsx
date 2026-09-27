@@ -18,7 +18,7 @@ import {
   X,
 } from 'lucide-react';
 
-type ArtStyle = 'Warli' | 'Madhubani' | 'Gond' | 'Pattachitra' | 'Kalamkari' | 'Signature';
+type ArtStyle = 'Warli' | 'Madhubani' | 'Gond' | 'Pattachitra' | 'Kalamkari' | 'Signature' | 'Surya' | 'Floral' | 'Shiva' | 'Forest' | 'Monsoon';
 type Product = {
   id: string;
   name: string;
@@ -31,7 +31,30 @@ type Product = {
   accent: string;
   sizes: number[];
 };
+type Review = { id: string; name: string; rating: number; text: string; createdAt: string; };
 type CartItem = Product & { size: number; quantity: number };
+
+const initialProductReviews: Record<string, Review[]> = {
+  dhara: [
+    { id: 'dhara-1', name: 'Rhea', rating: 5, text: 'The feel is unbelievably easy and the print feels so premium.', createdAt: '2026-01-06T10:00:00.000Z' },
+    { id: 'dhara-2', name: 'Aman', rating: 4, text: 'Comfortable from the first walk and the Warli details feel special.', createdAt: '2026-02-12T10:00:00.000Z' },
+  ],
+  rang: [
+    { id: 'rang-1', name: 'Nia', rating: 5, text: 'Bright, warm and beautifully detailed. Feels like art on your feet.', createdAt: '2026-01-15T10:00:00.000Z' },
+  ],
+  van: [
+    { id: 'van-1', name: 'Kabir', rating: 4, text: 'The sneakers feel sturdy and the design is understated in the best way.', createdAt: '2026-02-24T10:00:00.000Z' },
+  ],
+  chitra: [
+    { id: 'chitra-1', name: 'Meher', rating: 5, text: 'The ornament details really stand out without feeling too loud.', createdAt: '2026-03-04T10:00:00.000Z' },
+  ],
+  rooh: [
+    { id: 'rooh-1', name: 'Vikram', rating: 4, text: 'The colours are richer in person and the sole feels comfortable all day.', createdAt: '2026-03-19T10:00:00.000Z' },
+  ],
+  signature: [
+    { id: 'signature-1', name: 'Sana', rating: 5, text: 'This is the pair I keep reaching for. Clean and timeless.', createdAt: '2026-04-05T10:00:00.000Z' },
+  ],
+};
 
 const products: Product[] = [
   {
@@ -62,7 +85,32 @@ const products: Product[] = [
   {
     id: 'signature', name: 'KADAM SIGNATURE', style: 'Signature', price: 3999, rating: 5,
     description: 'The essential KADAM silhouette. Quietly unmistakable.',
-    image: '/images/products/kadam_product_signature.png', lifestyleImage: '/images/lifestyle/kadam_lifestyle_signature.png', accent: '#5b2528', sizes: [6, 7, 8, 9, 10],
+    image: '/images/products/06_Folk_Ornamental.png', lifestyleImage: '/images/products/06_Folk_Ornamental.png', accent: '#5b2528', sizes: [6, 7, 8, 9, 10],
+  },
+  {
+    id: 'surya', name: 'KADAM SURYA', style: 'Surya', price: 3599, rating: 4.8,
+    description: 'Sunlit geometry and an easy stride built for slow city mornings.',
+    image: '/images/products/01_Surya_Clouds.png', lifestyleImage: '/images/products/01_Surya_Clouds.png', accent: '#d6a14a', sizes: [6, 7, 8, 9, 10],
+  },
+  {
+    id: 'floral', name: 'KADAM FLORAL', style: 'Floral', price: 3399, rating: 4.7,
+    description: 'Botanical rhythms and softened colourwork for everyday movement.',
+    image: '/images/products/02_Floral_Vines.png', lifestyleImage: '/images/products/02_Floral_Vines.png', accent: '#b06f5b', sizes: [6, 7, 8, 9, 10],
+  },
+  {
+    id: 'shiva', name: 'KADAM SHIVA', style: 'Shiva', price: 3899, rating: 4.9,
+    description: 'Strong lines, ceremonial energy and a quietly powerful finish.',
+    image: '/images/products/03_Shiva.png', lifestyleImage: '/images/products/03_Shiva.png', accent: '#6d5b4f', sizes: [6, 7, 8, 9, 10],
+  },
+  {
+    id: 'forest', name: 'KADAM FOREST', style: 'Forest', price: 3499, rating: 4.8,
+    description: 'Wild textures and earthy tones inspired by nature and motion.',
+    image: '/images/products/04_Forest_Wildlife.png', lifestyleImage: '/images/products/04_Forest_Wildlife.png', accent: '#3d5b3f', sizes: [6, 7, 8, 9, 10],
+  },
+  {
+    id: 'monsoon', name: 'KADAM MONSOON', style: 'Monsoon', price: 3799, rating: 4.8,
+    description: 'Rain-soaked colour and a grounded silhouette for urban journeys.',
+    image: '/images/products/05_Monsoon_Village.png', lifestyleImage: '/images/products/05_Monsoon_Village.png', accent: '#4d6d7f', sizes: [6, 7, 8, 9, 10],
   },
 ];
 
@@ -86,6 +134,14 @@ function App() {
   const [dark, setDark] = useState(() => localStorage.getItem('kadam-theme') === 'dark');
   const [cart, setCart] = useState<CartItem[]>(() => JSON.parse(localStorage.getItem('kadam-cart') || '[]'));
   const [wishlist, setWishlist] = useState<string[]>(() => JSON.parse(localStorage.getItem('kadam-wishlist') || '[]'));
+  const [productReviews, setProductReviews] = useState<Record<string, Review[]>>(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('kadam-product-reviews') || '{}');
+      return { ...initialProductReviews, ...stored };
+    } catch {
+      return { ...initialProductReviews };
+    }
+  });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState('');
   const selectedProduct = products.find((product) => product.id === page.slice('product/'.length)) ?? products[0];
@@ -94,6 +150,7 @@ function App() {
   useEffect(() => { localStorage.setItem('kadam-theme', dark ? 'dark' : 'light'); }, [dark]);
   useEffect(() => { localStorage.setItem('kadam-cart', JSON.stringify(cart)); }, [cart]);
   useEffect(() => { localStorage.setItem('kadam-wishlist', JSON.stringify(wishlist)); }, [wishlist]);
+  useEffect(() => { localStorage.setItem('kadam-product-reviews', JSON.stringify(productReviews)); }, [productReviews]);
   useEffect(() => { if (toast) { const timer = window.setTimeout(() => setToast(''), 2400); return () => window.clearTimeout(timer); } }, [toast]);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -105,6 +162,8 @@ function App() {
   const addToCart = (product: Product, size = 8) => { setCart((current) => { const match = current.find((item) => item.id === product.id && item.size === size); return match ? current.map((item) => item === match ? { ...item, quantity: item.quantity + 1 } : item) : [...current, { ...product, size, quantity: 1 }]; }); setToast(`${product.name} added to cart`); setDrawerOpen(true); };
   const changeQuantity = (id: string, size: number, change: number) => setCart((current) => current.map((item) => item.id === id && item.size === size ? { ...item, quantity: Math.max(1, item.quantity + change) } : item));
   const removeFromCart = (id: string, size: number) => setCart((current) => current.filter((item) => !(item.id === id && item.size === size)));
+  const submitReview = (productId: string, name: string, rating: number, text: string) => { setProductReviews((current) => ({ ...current, [productId]: [...(current[productId] ?? []), { id: `${productId}-${Date.now()}`, name, rating, text, createdAt: new Date().toISOString() }] })); setToast('Review submitted'); };
+  const clearCart = () => setCart([]);
 
   return (
     <div className={dark ? 'app dark' : 'app'}>
@@ -128,14 +187,15 @@ function App() {
 
       {page === 'home' && <Home navigate={navigate} products={products} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} dark={dark} />}
       {page === 'shop' && <Shop products={products} navigate={navigate} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} />}
-      {page.startsWith('product/') && <ProductPage product={selectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} wishlist={wishlist} navigate={navigate} />}
+      {page.startsWith('product/') && <><ProductPage product={selectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} wishlist={wishlist} navigate={navigate} /><ProductReviews key={selectedProduct.id} product={selectedProduct} reviews={productReviews[selectedProduct.id] ?? []} submitReview={submitReview} /></>}
       {page === 'art-stories' && <ArtStories navigate={navigate} />}
       {page === 'lookbook' && <Lookbook products={products} />}
       {page === 'our-story' && <OurStory navigate={navigate} />}
       {page === 'customize' && <Customizer addToCart={addToCart} />}
       {page === 'wishlist' && <Wishlist products={products.filter((product) => wishlist.includes(product.id))} navigate={navigate} toggleWishlist={toggleWishlist} addToCart={addToCart} />}
       {page === 'cart' && <CartPage cart={cart} subtotal={subtotal} changeQuantity={changeQuantity} removeFromCart={removeFromCart} navigate={navigate} />}
-      {page === 'checkout' && <Checkout subtotal={subtotal} cart={cart} navigate={navigate} />}
+      {page === 'checkout' && <CheckoutWithClearCart subtotal={subtotal} cart={cart} navigate={navigate} onPlaceOrder={clearCart} />}
+      {page === 'returns' && <ReturnPolicy navigate={navigate} />}
       {page === 'account' && <Account navigate={navigate} />}
 
       <Footer navigate={navigate} />
@@ -190,7 +250,11 @@ function Lookbook({ products: items }: { products: Product[] }) {
   return <main className="lookbook-page"><div className="lookbook-hero"><img src={signature.lifestyleImage} alt="KADAM SIGNATURE styled for the KADAM lookbook" /><div><p className="eyebrow">The KADAM lookbook</p><h1>Step into<br /><em>the story.</em></h1></div></div><div className="lookbook-intro"><p>Traditional art, contemporary steps. Meet the six KADAM stories through the people and places that bring them to life.</p><span>01 — 06</span></div><div className="lookbook-mosaic">{items.map((product) => <img key={product.id} className="lifestyle-crop" src={product.lifestyleImage} alt={`${product.name} lifestyle story`} loading="lazy" />)}<div className="mosaic-quote">“The best stories<br /><em>are lived in.</em>”</div><div className="lookbook-chapters"><span>01 / 06</span><strong>KADAM DHARA — Warli</strong><span>02 / 06</span><strong>KADAM RANG — Madhubani</strong><span>03 / 06</span><strong>KADAM VAN — Gond</strong><span>04 / 06</span><strong>KADAM CHITRA — Pattachitra</strong><span>05 / 06</span><strong>KADAM ROOH — Kalamkari</strong><span>06 / 06</span><strong>KADAM SIGNATURE</strong></div></div></main>;
 }
 
-function OurStory({ navigate }: { navigate: (page: string) => void }) { return <main className="our-story page-shell"><div className="page-hero"><p className="eyebrow">The house of KADAM</p><h1>Our <em>story.</em></h1><p>Indian art has always told stories. KADAM gives those stories a new way to walk.</p></div><div className="story-timeline">{['Indian art', 'Culture', 'Inspiration', 'Design', 'KADAM'].map((item, index) => <div className={index === 4 ? 'timeline-item last' : 'timeline-item'} key={item}><span>0{index + 1}</span><div><h2>{item}</h2><p>{index === 0 ? 'A visual inheritance passed from one hand to another.' : index === 1 ? 'The details that make a place feel like home.' : index === 2 ? 'Looking closer at the lines, shapes and stories around us.' : index === 3 ? 'Translating memory into a silhouette for now.' : 'A sneaker with somewhere to go.'}</p></div></div>)}</div><section className="philosophy"><div><p className="eyebrow">A considered approach</p><h2>Not heritage<br /><em>preserved.</em><br />Heritage in motion.</h2></div><div><p>KADAM exists at the meeting point of two energies: the patience of traditional making and the restless rhythm of contemporary life.</p><p>We work with visual languages rooted in India, not to replicate them, but to let their spirit travel. On pavements, through train stations, into the everyday.</p><div className="principles"><span>Thoughtful packaging</span><span>Durable construction</span><span>Designed for long-term wear</span></div><button className="button primary" onClick={() => navigate('shop')}>Find your pair <ArrowRight size={16} /></button></div></section></main>; }
+function OurStory({ navigate }: { navigate: (page: string) => void }) { return <main className="our-story page-shell"><div className="page-hero"><p className="eyebrow">The house of KADAM</p><h1>Our <em>story.</em></h1><p>Indian art has always told stories. KADAM gives those stories a new way to walk.</p></div><div className="story-timeline">{['Indian art', 'Culture', 'Inspiration', 'Design', 'KADAM'].map((item, index) => <div className={index === 4 ? 'timeline-item last' : 'timeline-item'} key={item}><span>0{index + 1}</span><div><h2>{item}</h2><p>{index === 0 ? 'A visual inheritance passed from one hand to another.' : index === 1 ? 'The details that make a place feel like home.' : index === 2 ? 'Looking closer at the lines, shapes and stories around us.' : index === 3 ? 'Translating memory into a silhouette for now.' : 'A sneaker with somewhere to go.'}</p></div></div>)}</div><section className="philosophy"><div><p className="eyebrow">A considered approach</p><h2>Not heritage<br /><em>preserved.</em><br />Heritage in motion.</h2></div><div><p>KADAM exists at the meeting point of two energies: the patience of traditional making and the restless rhythm of contemporary life.</p><p>We work with visual languages rooted in India, not to replicate them, but to let their spirit travel. On pavements, through train stations, into the everyday.</p><div className="principles"><span>Thoughtful packaging</span><span>Durable construction</span><span>Designed for long-term wear</span></div><button className="button primary" onClick={() => navigate('shop')}>Find your pair <ArrowRight size={16} /></button></div></section><section className="story-visual-panel"><div className="story-feature-image"><img src="/images/art/warli.jpg" alt="Indian art visual story" /></div><div className="story-feature-copy"><p className="eyebrow">Our story</p><h3>Indian art, shaped for the street.</h3><p>We begin with patterns, symbols and memory. From there, we turn visual language into a form that moves with contemporary life.</p></div></section><section className="story-visual-grid"><div className="story-visual-card large"><img src="/images/art/gond.jpg" alt="Gond-inspired art" /><div><span>Indian art</span><strong>Pattern. Memory. Motion.</strong></div></div><div className="story-visual-card"><img src="/images/art/kalamkari.jpg" alt="Kalamkari-inspired art" /><div><span>Art</span><strong>Hand-drawn rhythm</strong></div></div></section><section className="story-steps"><div className="story-step"><span>01</span><p>Art / motif</p></div><div className="story-step"><span>02</span><p>Interpretation</p></div><div className="story-step"><span>03</span><p>KADAM sneaker</p></div></section><section className="story-collection"><div className="section-heading compact"><div><p className="eyebrow">The collection</p><h2>Selected<br /><em>stories.</em></h2></div></div><div className="story-collection-grid">{products.filter((product) => ['surya', 'floral', 'shiva', 'forest', 'monsoon'].includes(product.id)).map((product) => <button key={product.id} className="story-product-card" onClick={() => navigate(`product/${product.id}`)}><img src={product.image} alt={product.name} /><div><strong>{product.name}</strong><span>{product.style} / India</span></div></button>)}</div></section></main>; }
+
+function ReturnPolicy({ navigate }: { navigate: (page: string) => void }) {
+  return <main className="page-shell return-policy-page"><div className="page-hero compact"><p className="eyebrow">Support</p><h1>Return <em>policy.</em></h1></div><div className="return-policy"><h2>RETURN POLICY</h2><p>KADAM wants you to feel confident with every step.</p><div className="return-policy-item"><h3>1. RETURN ELIGIBILITY</h3><ul><li>Product must be unused and unworn.</li><li>Product must be in original condition.</li><li>Original packaging should be retained.</li><li>Return requests must be made within 7 days of delivery.</li></ul></div><div className="return-policy-item"><h3>1. NON-RETURNABLE ITEMS</h3><ul><li>Used or worn sneakers</li><li>Products damaged after delivery</li><li>Products without original packaging</li><li>Products altered by the customer</li></ul></div><div className="return-policy-item"><h3>1. HOW TO REQUEST A RETURN</h3><ul><li>Contact KADAM Support.</li><li>Provide the order number.</li><li>Select the product.</li><li>Mention the reason for return.</li><li>Submit the request.</li></ul></div><div className="return-policy-item"><h3>1. RETURN PROCESS</h3><p>The request is reviewed by the KADAM team. Once approved, the return process begins.</p></div><div className="return-policy-item"><h3>1. REFUND</h3><p>Refunds are processed after the returned product has been received and inspected.</p></div><p className="policy-note">This is a DEMO e-commerce website. Do NOT connect real logistics, payment, or refund services.</p><button className="button primary" onClick={() => navigate('shop')}>Continue shopping <ArrowRight size={16} /></button></div></main>;
+}
 
 function Customizer({ addToCart }: { addToCart: (product: Product) => void }) { const [colour, setColour] = useState('Cream'); const [style, setStyle] = useState('Warli'); const [laces, setLaces] = useState('Maroon'); const [sole, setSole] = useState('Brown'); const choices = [['Sneaker colour', ['Cream', 'Black', 'Tan'], colour, setColour], ['Art style', ['Warli', 'Madhubani', 'Gond', 'Kalamkari'], style, setStyle], ['Laces', ['Cream', 'Maroon', 'Brown'], laces, setLaces], ['Sole', ['Cream', 'Brown', 'Black'], sole, setSole]] as const; return <main className="customizer page-shell"><div className="page-hero"><p className="eyebrow">The personal edition</p><h1>Create your<br /><em>KADAM.</em></h1><p>Make the story yours.</p></div><div className="custom-layout"><div className="custom-preview"><div className={`custom-shoe large ${colour.toLowerCase()} ${sole.toLowerCase()}`}><div className="shoe-top" /><div className="shoe-sole" /><span>{style}</span></div><div className="preview-caption"><span>YOUR KADAM</span><strong>01 / 01</strong></div></div><div className="custom-controls">{choices.map(([label, options, value, setter]) => <div className="choice-group" key={label}><div className="choice-heading"><strong>{label}</strong><span>{value}</span></div><div className="choice-options">{options.map((option) => <button className={value === option ? 'selected' : ''} key={option} onClick={() => setter(option)}>{option}{value === option && <Check size={14} />}</button>)}</div></div>)}<div className="custom-total"><span>YOUR KADAM</span><strong>{money(3499)}</strong></div><button className="button primary full" onClick={() => addToCart({ ...products[5], name: `KADAM CUSTOM / ${style.toUpperCase()}` })}>Add to cart <ShoppingBag size={16} /></button><button className="reset-button" onClick={() => { setColour('Cream'); setStyle('Warli'); setLaces('Maroon'); setSole('Brown'); }}>Reset configuration</button></div></div></main>; }
 
@@ -206,6 +270,39 @@ function Checkout({ subtotal, cart, navigate }: { subtotal: number; cart: CartIt
 function CheckoutSection({ title, children }: { title: string; children: React.ReactNode }) { return <section className="checkout-section"><h3>{title}</h3>{children}</section>; }
 function Account({ navigate }: { navigate: (page: string) => void }) { return <main className="page-shell account"><div className="page-hero"><p className="eyebrow">The KADAM club</p><h1>Your <em>account.</em></h1><p>Sign in to keep your orders and saved pieces close.</p></div><div className="account-box"><UserRound size={28} /><h2>Welcome to KADAM</h2><p>Account access is ready for your next chapter.</p><button className="button primary" onClick={() => navigate('shop')}>Continue shopping <ArrowRight size={16} /></button></div></main>; }
 
-function Footer({ navigate }: { navigate: (page: string) => void }) { return <footer><div className="footer-top"><div><button className="wordmark footer-logo" onClick={() => navigate('home')}>KADAM<span>▲</span></button><p>India, reimagined.</p><div className="socials"><Instagram size={17} /><span>pinterest</span></div></div><div className="footer-news"><p className="eyebrow">Stay in the loop</p><h3>New drops, stories<br />and KADAM updates.</h3><div className="newsletter"><input placeholder="Enter your email" type="email" /><button>Join</button></div></div><div className="footer-links"><div><span>Shop</span><button onClick={() => navigate('shop')}>Signature collection</button><button onClick={() => navigate('shop')}>New arrivals</button><button onClick={() => navigate('shop')}>Best sellers</button></div><div><span>About</span><button onClick={() => navigate('our-story')}>Our story</button><button onClick={() => navigate('art-stories')}>Art stories</button><button onClick={() => navigate('lookbook')}>Lookbook</button></div><div><span>Support</span><button>Contact</button><button>Shipping</button><button>Returns</button></div></div></div><div className="footer-bottom"><span>© 2026 KADAM</span><span>Made with intention in India</span><span>Privacy / Terms</span></div></footer>; }
+function Footer({ navigate }: { navigate: (page: string) => void }) { return <footer><div className="footer-top"><div><button className="wordmark footer-logo" onClick={() => navigate('home')}>KADAM<span>▲</span></button><p>India, reimagined.</p><div className="socials"><Instagram size={17} /><span>pinterest</span></div></div><div className="footer-news"><p className="eyebrow">Stay in the loop</p><h3>New drops, stories<br />and KADAM updates.</h3><div className="newsletter"><input placeholder="Enter your email" type="email" /><button>Join</button></div></div><div className="footer-links"><div><span>Shop</span><button onClick={() => navigate('shop')}>Signature collection</button><button onClick={() => navigate('shop')}>New arrivals</button><button onClick={() => navigate('shop')}>Best sellers</button></div><div><span>About</span><button onClick={() => navigate('our-story')}>Our story</button><button onClick={() => navigate('art-stories')}>Art stories</button><button onClick={() => navigate('lookbook')}>Lookbook</button></div><div><span>Support</span><button>Contact</button><button>Shipping</button><button onClick={() => navigate('returns')}>Returns</button></div></div></div><div className="footer-bottom"><span>© 2026 KADAM</span><span>Made with intention in India</span><span>Privacy / Terms</span></div></footer>; }
+
+function ProductReviews({ product, reviews, submitReview }: { product: Product; reviews: Review[]; submitReview: (productId: string, name: string, rating: number, text: string) => void }) {
+  const [name, setName] = useState('');
+  const [rating, setRating] = useState(5);
+  const [text, setText] = useState('');
+  const average = reviews.length ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length : product.rating;
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedName = name.trim();
+    const trimmedText = text.trim();
+    if (!trimmedName || !trimmedText) return;
+    submitReview(product.id, trimmedName, rating, trimmedText);
+    setName('');
+    setRating(5);
+    setText('');
+  };
+
+  return <section className="reviews-panel page-shell"><div className="reviews-header"><div><p className="eyebrow">Customer reviews</p><h2>What people are saying</h2></div><strong><Star size={14} fill="currentColor" /> {average.toFixed(1)} / 5</strong></div><div className="reviews-layout"><div className="review-list">{reviews.length ? reviews.map((review) => <article className="review-item" key={review.id}><div className="review-top"><strong>{review.name}</strong><span>{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span></div><div className="star-row">{Array.from({ length: 5 }, (_, index) => <Star key={`${review.id}-${index}`} size={12} fill={index < review.rating ? 'currentColor' : 'none'} />)}</div><p>{review.text}</p></article>) : <p className="empty-review">No reviews yet. Be the first to share yours.</p>}</div><form className="review-form" onSubmit={handleSubmit}><h3>Leave a review</h3><label>Name<input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" required /></label><label>Rating<select value={rating} onChange={(event) => setRating(Number(event.target.value))}><option value={5}>5 stars</option><option value={4}>4 stars</option><option value={3}>3 stars</option><option value={2}>2 stars</option><option value={1}>1 star</option></select></label><label>Review<textarea value={text} onChange={(event) => setText(event.target.value)} rows={4} placeholder="Tell us what you think..." required /></label><button className="button primary" type="submit">Submit review <ArrowRight size={15} /></button></form></div></section>;
+}
+
+function CheckoutWithClearCart({ subtotal, cart, navigate, onPlaceOrder }: { subtotal: number; cart: CartItem[]; navigate: (page: string) => void; onPlaceOrder: () => void }) {
+  const [done, setDone] = useState(false);
+  if (done) return <main className="confirmation page-shell"><div className="confirmation-mark"><Check size={34} /></div><p className="eyebrow">Order confirmed / #KD-26091</p><h1>Your KADAM<br /><em>is on its way.</em></h1><p>Thank you for giving the story somewhere new to go. We’ll keep you posted as your order travels to you.</p><button className="button primary" onClick={() => navigate('shop')}>Continue exploring <ArrowRight size={16} /></button></main>;
+
+  const placeOrder = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onPlaceOrder();
+    setDone(true);
+  };
+
+  return <main className="page-shell checkout"><div className="page-hero compact"><p className="eyebrow">A considered finish</p><h1>Check <em>out.</em></h1></div><form className="checkout-layout" onSubmit={placeOrder}><div className="checkout-form"><CheckoutSection title="Contact"><div className="form-grid"><label>Full name<input required placeholder="Your name" /></label><label>Email<input required type="email" placeholder="you@example.com" /></label><label>Phone<input required type="tel" placeholder="+91 00000 00000" /></label></div></CheckoutSection><CheckoutSection title="Delivery"><div className="form-grid"><label>Address<input required placeholder="Flat, building, street" /></label><label>City<input required placeholder="Mumbai" /></label><label>State<input required placeholder="Maharashtra" /></label><label>Pincode<input required inputMode="numeric" pattern="[0-9]{6}" placeholder="400001" /></label></div></CheckoutSection><CheckoutSection title="Payment"><div className="payment-options"><label><input type="radio" name="payment" value="upi" defaultChecked /> UPI <span>Recommended</span></label><label><input type="radio" name="payment" value="card" /> Card</label><label><input type="radio" name="payment" value="cod" /> Cash on delivery</label></div></CheckoutSection><button className="button primary" type="submit" disabled={!cart.length}>Place order <ArrowRight size={16} /></button></div><div className="checkout-sum"><h3>Summary</h3>{cart.map((item) => <div className="summary-line" key={`${item.id}-${item.size}`}><div><strong>{item.name}</strong><small>Size {item.size} · Qty {item.quantity}</small></div><strong>{money(item.price * item.quantity)}</strong></div>)}<div className="summary-total"><span>Grand total</span><strong>{money(subtotal + (subtotal >= 2999 || subtotal === 0 ? 0 : 149))}</strong></div><button className="button primary full" type="submit" disabled={!cart.length}>Place order <ArrowRight size={16} /></button></div></form></main>;
+}
 
 export default App;
