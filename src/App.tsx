@@ -35,6 +35,14 @@ type Review = { id: string; name: string; rating: number; text: string; createdA
 type CartItem = Product & { size: number; quantity: number };
 type SavedAddress = { id: string; fullName: string; phone: string; building: string; street: string; city: string; state: string; pin: string; isDefault: boolean };
 type UserAccount = { id: string; name: string; email: string; password: string; addresses: SavedAddress[] };
+type ProductCategory = 'new' | 'trending' | 'bestseller' | 'limited_drop';
+
+const productCategories: { id: ProductCategory; label: string; productIds: string[] }[] = [
+  { id: 'new', label: 'NEW', productIds: ['surya', 'monsoon'] },
+  { id: 'trending', label: 'TRENDING', productIds: ['signature'] },
+  { id: 'bestseller', label: 'BESTSELLER', productIds: ['dhara', 'rang', 'rooh'] },
+  { id: 'limited_drop', label: 'LIMITED DROP', productIds: ['forest'] },
+];
 
 const initialProductReviews: Record<string, Review[]> = {
   dhara: [
@@ -139,6 +147,7 @@ const readAccounts = (): UserAccount[] => {
 
 function App() {
   const [page, setPage] = useState('home');
+  const [activeCategory, setActiveCategory] = useState<ProductCategory | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [dark, setDark] = useState(() => localStorage.getItem('kadam-theme') === 'dark');
@@ -166,13 +175,36 @@ function App() {
   useEffect(() => { localStorage.setItem('kadam-accounts', JSON.stringify(accounts)); }, [accounts]);
   useEffect(() => { if (activeUserId) localStorage.setItem('kadam-current-user', activeUserId); else localStorage.removeItem('kadam-current-user'); }, [activeUserId]);
   useEffect(() => { if (toast) { const timer = window.setTimeout(() => setToast(''), 2400); return () => window.clearTimeout(timer); } }, [toast]);
+  useEffect(() => {
+    window.history.replaceState({ page: 'home', category: null }, '');
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state as { page?: string; category?: ProductCategory | null } | null;
+      setPage(state?.page ?? 'home');
+      setActiveCategory(state?.category ?? null);
+      setMobileOpen(false);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const activeUser = accounts.find((account) => account.id === activeUserId) ?? null;
   const searchResults = useMemo(() => products.filter((product) => `${product.name} ${product.style}`.toLowerCase().includes(query.toLowerCase())), [query]);
 
-  const navigate = (destination: string) => { setPage(destination); setMobileOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const navigate = (destination: string, category: ProductCategory | null = destination === 'shop' ? null : activeCategory) => {
+    window.history.pushState({ page: destination, category }, '');
+    setPage(destination);
+    setActiveCategory(category);
+    setMobileOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const selectCategory = (category: ProductCategory | null) => {
+    navigate('shop', category);
+    if (category) {
+      (window as Window & { gtag?: (command: string, eventName: string) => void }).gtag?.('event', `category_${category}`);
+    }
+  };
   const toggleWishlist = (id: string) => { setWishlist((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]); setToast(wishlist.includes(id) ? 'Removed from wishlist' : 'Added to wishlist'); };
   const addToCart = (product: Product, size = 8) => { setCart((current) => { const match = current.find((item) => item.id === product.id && item.size === size); return match ? current.map((item) => item === match ? { ...item, quantity: item.quantity + 1 } : item) : [...current, { ...product, size, quantity: 1 }]; }); setToast(`${product.name} added to cart`); setDrawerOpen(true); };
   const changeQuantity = (id: string, size: number, change: number) => setCart((current) => current.map((item) => item.id === id && item.size === size ? { ...item, quantity: Math.max(1, item.quantity + change) } : item));
@@ -231,8 +263,8 @@ function App() {
       </header>
       {searchOpen && <div className="search-bar"><Search size={18} /><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search KADAM..." /><button onClick={() => setSearchOpen(false)}><X size={18} /></button>{query && <div className="search-results">{searchResults.map((product) => <button key={product.id} onClick={() => { navigate(`product/${product.id}`); setSearchOpen(false); }}><img src={product.image} alt="" /><span className="search-result-copy"><strong>{product.name}</strong><small>{product.style}</small></span><ArrowRight size={14} /></button>)}{!searchResults.length && <p>No pieces found. Try another story.</p>}</div>}</div>}
 
-      {page === 'home' && <Home navigate={navigate} products={products} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} dark={dark} />}
-      {page === 'shop' && <Shop products={products} navigate={navigate} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} />}
+      {page === 'home' && <Home navigate={navigate} selectCategory={selectCategory} products={products} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} dark={dark} />}
+      {page === 'shop' && <Shop products={products} category={activeCategory} selectCategory={selectCategory} navigate={navigate} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} />}
       {page.startsWith('product/') && <><ProductPage product={selectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} wishlist={wishlist} navigate={navigate} /><ProductReviews key={selectedProduct.id} product={selectedProduct} reviews={productReviews[selectedProduct.id] ?? []} submitReview={submitReview} /></>}
       {page === 'art-stories' && <ArtStories navigate={navigate} />}
       {page === 'lookbook' && <Lookbook products={products} />}
@@ -253,14 +285,14 @@ function App() {
 
 function Announcement() { return <div className="announcement">Free shipping across India on orders over ₹2,999 <span>·</span> Made for the journey</div>; }
 
-function Home({ navigate, products: items, toggleWishlist, wishlist, addToCart, dark }: { navigate: (page: string) => void; products: Product[]; toggleWishlist: (id: string) => void; wishlist: string[]; addToCart: (product: Product) => void; dark: boolean }) {
+function Home({ navigate, selectCategory, products: items, toggleWishlist, wishlist, addToCart, dark }: { navigate: (page: string) => void; selectCategory: (category: ProductCategory | null) => void; products: Product[]; toggleWishlist: (id: string) => void; wishlist: string[]; addToCart: (product: Product) => void; dark: boolean }) {
   return <main>
     <section className="hero">
       <div className="hero-copy"><p className="eyebrow">The first chapter / 2026</p><h1>India,<br /><em>reimagined.</em></h1><p className="hero-text">Where timeless Indian artistry meets contemporary streetwear. Stories rooted in culture, made to move with you.</p><div className="hero-actions"><button className="button primary" onClick={() => navigate('shop')}>Shop the drop <ArrowRight size={16} /></button><button className="text-button" onClick={() => navigate('our-story')}>Discover KADAM <ArrowRight size={15} /></button></div><div className="hero-note"><span>01</span><div><strong>DHARA</strong><small>Inspired by Warli / The earth remembers</small></div></div></div>
       <div className="hero-visual"><div className="hero-orbit" /><div className="hero-art-label">रचना / 01</div><img className="hero-lifestyle" src={items[0].lifestyleImage} alt="KADAM DHARA styled for everyday wear" /></div>
     </section>
     <section className="marquee"><div>INDIA, REIMAGINED. <span>✦</span> INDIA, REIMAGINED. <span>✦</span> INDIA, REIMAGINED. <span>✦</span></div></section>
-    <section className="section collection"><div className="section-heading"><div><p className="eyebrow">The collection / 01</p><h2>Signature<br /><em>collection.</em></h2></div><div className="heading-side"><p>Five artistic traditions.<br />One contemporary silhouette.</p><button className="text-button" onClick={() => navigate('shop')}>View all pieces <ArrowRight size={15} /></button></div></div><div className="product-grid">{items.map((product) => <ProductCard key={product.id} product={product} toggleWishlist={toggleWishlist} wishlisted={wishlist.includes(product.id)} addToCart={addToCart} onOpen={() => { navigate(`product/${product.id}`); }} />)}</div></section>
+    <section className="section collection"><div className="section-heading"><div><p className="eyebrow">The collection / 01</p><h2>Signature<br /><em>collection.</em></h2></div><div className="heading-side"><p>Five artistic traditions.<br />One contemporary silhouette.</p><button className="text-button" onClick={() => navigate('shop')}>View all pieces <ArrowRight size={15} /></button></div></div><CategoryControls selectCategory={selectCategory} /><div className="product-grid">{items.map((product) => <ProductCard key={product.id} product={product} toggleWishlist={toggleWishlist} wishlisted={wishlist.includes(product.id)} addToCart={addToCart} onOpen={() => { navigate(`product/${product.id}`); }} />)}</div></section>
     <ArtToSneaker navigate={navigate} />
     <ArtPreview navigate={navigate} />
     <section className="custom-tease"><div className="custom-copy"><p className="eyebrow">Make it yours / 02</p><h2>Create your<br /><em>KADAM.</em></h2><p>Choose your palette. Find your rhythm. Build a pair that only belongs to you.</p><button className="button light" onClick={() => navigate('customize')}>Start creating <ArrowRight size={16} /></button></div><div className="custom-swatch"><div className="custom-shoe"><div className="shoe-top" /><div className="shoe-sole" /></div><span>YOUR KADAM / 01</span></div></section>
@@ -272,11 +304,26 @@ function Home({ navigate, products: items, toggleWishlist, wishlist, addToCart, 
 
 function ProductCard({ product, toggleWishlist, wishlisted, addToCart, onOpen }: { product: Product; toggleWishlist: (id: string) => void; wishlisted: boolean; addToCart: (product: Product) => void; onOpen: () => void }) { return <article className="product-card"><div className="product-image" onClick={onOpen}><img className={`collection-image ${product.id}`} src={product.image} alt={`${product.name}, inspired by ${product.style} art`} loading="lazy" /><button className="heart-card" aria-label="Save product" onClick={(event) => { event.stopPropagation(); toggleWishlist(product.id); }}><Heart size={17} fill={wishlisted ? 'currentColor' : 'none'} /></button><button className="quick-add" onClick={(event) => { event.stopPropagation(); addToCart(product); }}>Quick add <Plus size={14} /></button><span className="product-index">0{products.findIndex((item) => item.id === product.id) + 1}</span></div><div className="product-info" onClick={onOpen}><div><h3>{product.name}</h3><p>Inspired by {product.style} art</p></div><strong>{money(product.price)}</strong></div><div className="product-meta"><span><Star size={12} fill="currentColor" /> {product.rating}</span><span>6 · 7 · 8 · 9 · 10</span></div></article>; }
 
+function CategoryControls({ selectCategory }: { selectCategory: (category: ProductCategory | null) => void }) {
+  return <div className="category-controls" aria-label="Shop product categories">
+    {productCategories.map((category) => <button key={category.id} className="category-badge" onClick={() => selectCategory(category.id)}>
+      <span>{category.label}</span><small>{category.productIds.length.toString().padStart(2, '0')} pieces</small>
+    </button>)}
+  </div>;
+}
+
 function ArtToSneaker({ navigate }: { navigate: (page: string) => void }) { return <section className="art-sneaker"><div className="art-sneaker-image"><img src={featuredArtImage} alt="Warli art inspiring KADAM DHARA" /><span>From the archive / 01</span></div><div className="art-sneaker-copy"><p className="eyebrow">Art to sneaker / 02</p><h2>Old stories.<br /><em>New steps.</em></h2><p>We look to the lines, movement and memory within India's visual languages — then translate them into something you can live in.</p><div className="process"><div><span>01</span><strong>Tradition</strong></div><ArrowRight size={16} /><div><span>02</span><strong>Motifs</strong></div><ArrowRight size={16} /><div><span>03</span><strong>Motion</strong></div></div><button className="text-button" onClick={() => navigate('art-stories')}>Explore the art stories <ArrowRight size={15} /></button></div></section>; }
 
 function ArtPreview({ navigate }: { navigate: (page: string) => void }) { return <section className="section art-preview"><div className="section-heading"><div><p className="eyebrow">The inspiration / 02</p><h2>Art → Culture →<br /><em>Design.</em></h2></div><div className="heading-side"><p>Every KADAM begins with a story.</p><button className="text-button" onClick={() => navigate('art-stories')}>Explore art stories <ArrowRight size={15} /></button></div></div><div className="art-preview-grid">{artStories.map((story, index) => <button className="art-preview-card" key={story.id} onClick={() => navigate('art-stories')}><span className="art-preview-index">0{index + 1}</span><div className="art-preview-image"><img src={story.image} alt={`${story.art} artwork inspiring ${story.name}`} loading="lazy" /></div><div className="art-preview-info"><strong>{story.name}</strong><span>{story.art}</span></div></button>)}</div></section>; }
 
-function Shop({ products: items, navigate, toggleWishlist, wishlist, addToCart }: { products: Product[]; navigate: (page: string) => void; toggleWishlist: (id: string) => void; wishlist: string[]; addToCart: (product: Product) => void }) { const [filter, setFilter] = useState<ArtStyle | 'All'>('All'); const [sort, setSort] = useState('Featured'); const filtered = items.filter((product) => filter === 'All' || product.style === filter).sort((a, b) => sort === 'Price low to high' ? a.price - b.price : sort === 'Price high to low' ? b.price - a.price : 0); return <main className="page-shell"><div className="page-hero"><p className="eyebrow">The complete edit</p><h1>Shop <em>KADAM.</em></h1><p>Contemporary sneakers inspired by India's artistic traditions.</p></div><div className="shop-toolbar"><div className="filter-pills">{(['All', 'Warli', 'Madhubani', 'Gond', 'Pattachitra', 'Kalamkari', 'Signature'] as const).map((item) => <button className={filter === item ? 'selected' : ''} key={item} onClick={() => setFilter(item)}>{item}</button>)}</div><label className="sort-select">{filtered.length} pieces <ChevronDown size={14} /><select value={sort} onChange={(event) => setSort(event.target.value)}><option>Featured</option><option>Price low to high</option><option>Price high to low</option></select></label></div><div className="product-grid shop-grid">{filtered.map((product) => <ProductCard key={product.id} product={product} toggleWishlist={toggleWishlist} wishlisted={wishlist.includes(product.id)} addToCart={addToCart} onOpen={() => { navigate(`product/${product.id}`); }} />)}</div></main>; }
+function Shop({ products: items, category, selectCategory, navigate, toggleWishlist, wishlist, addToCart }: { products: Product[]; category: ProductCategory | null; selectCategory: (category: ProductCategory | null) => void; navigate: (page: string) => void; toggleWishlist: (id: string) => void; wishlist: string[]; addToCart: (product: Product) => void }) {
+  const [filter, setFilter] = useState<ArtStyle | 'All'>('All');
+  const [sort, setSort] = useState('Featured');
+  const categoryIds = productCategories.find((item) => item.id === category)?.productIds;
+  const filtered = items.filter((product) => (!categoryIds || categoryIds.includes(product.id)) && (filter === 'All' || product.style === filter)).sort((a, b) => sort === 'Price low to high' ? a.price - b.price : sort === 'Price high to low' ? b.price - a.price : 0);
+  const changeCategory = (nextCategory: ProductCategory | null) => { setFilter('All'); selectCategory(nextCategory); };
+  return <main className="page-shell"><div className="page-hero"><p className="eyebrow">The complete edit</p><h1>Shop <em>KADAM.</em></h1><p>Contemporary sneakers inspired by India's artistic traditions.</p></div><div className="shop-categories" aria-label="Filter by collection category"><button className={!category ? 'selected' : ''} onClick={() => changeCategory(null)}>View All</button>{productCategories.map((item) => <button key={item.id} className={category === item.id ? 'selected' : ''} onClick={() => changeCategory(item.id)}>{item.label}</button>)}</div><div className="shop-toolbar"><div className="filter-pills">{(['All', 'Warli', 'Madhubani', 'Gond', 'Pattachitra', 'Kalamkari', 'Signature'] as const).map((item) => <button className={filter === item ? 'selected' : ''} key={item} onClick={() => setFilter(item)}>{item}</button>)}</div><label className="sort-select">{filtered.length} pieces <ChevronDown size={14} /><select value={sort} onChange={(event) => setSort(event.target.value)}><option>Featured</option><option>Price low to high</option><option>Price high to low</option></select></label></div><div className="product-grid shop-grid">{filtered.map((product) => <ProductCard key={product.id} product={product} toggleWishlist={toggleWishlist} wishlisted={wishlist.includes(product.id)} addToCart={addToCart} onOpen={() => { navigate(`product/${product.id}`); }} />)}</div></main>;
+}
 
 function ProductPage({ product, addToCart, toggleWishlist, wishlist, navigate }: { product: Product; addToCart: (product: Product, size?: number) => void; toggleWishlist: (id: string) => void; wishlist: string[]; navigate: (page: string) => void }) {
   const [size, setSize] = useState(8);
