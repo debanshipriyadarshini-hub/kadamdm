@@ -18,7 +18,7 @@ import {
   X,
 } from 'lucide-react';
 
-type ArtStyle = 'Warli' | 'Madhubani' | 'Gond' | 'Pattachitra' | 'Kalamkari' | 'Signature' | 'Surya' | 'Floral' | 'Shiva' | 'Forest' | 'Monsoon';
+type ArtStyle = 'Warli' | 'Madhubani' | 'Gond' | 'Pattachitra' | 'Kalamkari' | 'Signature';
 type Product = {
   id: string;
   name: string;
@@ -31,32 +31,7 @@ type Product = {
   accent: string;
   sizes: number[];
 };
-type Review = { id: string; name: string; rating: number; text: string; createdAt: string; };
 type CartItem = Product & { size: number; quantity: number };
-type SavedAddress = { id: string; fullName: string; phone: string; building: string; street: string; city: string; state: string; pin: string; isDefault: boolean };
-type UserAccount = { id: string; name: string; email: string; password: string; addresses: SavedAddress[] };
-
-const initialProductReviews: Record<string, Review[]> = {
-  dhara: [
-    { id: 'dhara-1', name: 'Rhea', rating: 5, text: 'The feel is unbelievably easy and the print feels so premium.', createdAt: '2026-01-06T10:00:00.000Z' },
-    { id: 'dhara-2', name: 'Aman', rating: 4, text: 'Comfortable from the first walk and the Warli details feel special.', createdAt: '2026-02-12T10:00:00.000Z' },
-  ],
-  rang: [
-    { id: 'rang-1', name: 'Nia', rating: 5, text: 'Bright, warm and beautifully detailed. Feels like art on your feet.', createdAt: '2026-01-15T10:00:00.000Z' },
-  ],
-  van: [
-    { id: 'van-1', name: 'Kabir', rating: 4, text: 'The sneakers feel sturdy and the design is understated in the best way.', createdAt: '2026-02-24T10:00:00.000Z' },
-  ],
-  chitra: [
-    { id: 'chitra-1', name: 'Meher', rating: 5, text: 'The ornament details really stand out without feeling too loud.', createdAt: '2026-03-04T10:00:00.000Z' },
-  ],
-  rooh: [
-    { id: 'rooh-1', name: 'Vikram', rating: 4, text: 'The colours are richer in person and the sole feels comfortable all day.', createdAt: '2026-03-19T10:00:00.000Z' },
-  ],
-  signature: [
-    { id: 'signature-1', name: 'Sana', rating: 5, text: 'This is the pair I keep reaching for. Clean and timeless.', createdAt: '2026-04-05T10:00:00.000Z' },
-  ],
-};
 
 const products: Product[] = [
   {
@@ -87,32 +62,7 @@ const products: Product[] = [
   {
     id: 'signature', name: 'KADAM SIGNATURE', style: 'Signature', price: 3999, rating: 5,
     description: 'The essential KADAM silhouette. Quietly unmistakable.',
-    image: '/images/products/06_Folk_Ornamental.png', lifestyleImage: '/images/products/06_Folk_Ornamental.png', accent: '#5b2528', sizes: [6, 7, 8, 9, 10],
-  },
-  {
-    id: 'surya', name: 'KADAM SURYA', style: 'Surya', price: 3599, rating: 4.8,
-    description: 'Sunlit geometry and an easy stride built for slow city mornings.',
-    image: '/images/products/01_Surya_Clouds.png', lifestyleImage: '/images/products/01_Surya_Clouds.png', accent: '#d6a14a', sizes: [6, 7, 8, 9, 10],
-  },
-  {
-    id: 'floral', name: 'KADAM FLORAL', style: 'Floral', price: 3399, rating: 4.7,
-    description: 'Botanical rhythms and softened colourwork for everyday movement.',
-    image: '/images/products/02_Floral_Vines.png', lifestyleImage: '/images/products/02_Floral_Vines.png', accent: '#b06f5b', sizes: [6, 7, 8, 9, 10],
-  },
-  {
-    id: 'shiva', name: 'KADAM SHIVA', style: 'Shiva', price: 3899, rating: 4.9,
-    description: 'Strong lines, ceremonial energy and a quietly powerful finish.',
-    image: '/images/products/03_Shiva.png', lifestyleImage: '/images/products/03_Shiva.png', accent: '#6d5b4f', sizes: [6, 7, 8, 9, 10],
-  },
-  {
-    id: 'forest', name: 'KADAM FOREST', style: 'Forest', price: 3499, rating: 4.8,
-    description: 'Wild textures and earthy tones inspired by nature and motion.',
-    image: '/images/products/04_Forest_Wildlife.png', lifestyleImage: '/images/products/04_Forest_Wildlife.png', accent: '#3d5b3f', sizes: [6, 7, 8, 9, 10],
-  },
-  {
-    id: 'monsoon', name: 'KADAM MONSOON', style: 'Monsoon', price: 3799, rating: 4.8,
-    description: 'Rain-soaked colour and a grounded silhouette for urban journeys.',
-    image: '/images/products/05_Monsoon_Village.png', lifestyleImage: '/images/products/05_Monsoon_Village.png', accent: '#4d6d7f', sizes: [6, 7, 8, 9, 10],
+    image: '/images/products/kadam_product_signature.png', lifestyleImage: '/images/lifestyle/kadam_lifestyle_signature.png', accent: '#5b2528', sizes: [6, 7, 8, 9, 10],
   },
 ];
 
@@ -129,14 +79,6 @@ const featuredArtImage = artStories.find((story) => story.productId === 'dhara')
 
 const money = (value: number) => `₹${value.toLocaleString('en-IN')}`;
 
-const readAccounts = (): UserAccount[] => {
-  try {
-    return JSON.parse(localStorage.getItem('kadam-accounts') || '[]') as UserAccount[];
-  } catch {
-    return [];
-  }
-};
-
 function App() {
   const [page, setPage] = useState('home');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -144,16 +86,6 @@ function App() {
   const [dark, setDark] = useState(() => localStorage.getItem('kadam-theme') === 'dark');
   const [cart, setCart] = useState<CartItem[]>(() => JSON.parse(localStorage.getItem('kadam-cart') || '[]'));
   const [wishlist, setWishlist] = useState<string[]>(() => JSON.parse(localStorage.getItem('kadam-wishlist') || '[]'));
-  const [accounts, setAccounts] = useState<UserAccount[]>(readAccounts);
-  const [activeUserId, setActiveUserId] = useState(() => localStorage.getItem('kadam-current-user') || '');
-  const [productReviews, setProductReviews] = useState<Record<string, Review[]>>(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('kadam-product-reviews') || '{}');
-      return { ...initialProductReviews, ...stored };
-    } catch {
-      return { ...initialProductReviews };
-    }
-  });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState('');
   const selectedProduct = products.find((product) => product.id === page.slice('product/'.length)) ?? products[0];
@@ -162,14 +94,10 @@ function App() {
   useEffect(() => { localStorage.setItem('kadam-theme', dark ? 'dark' : 'light'); }, [dark]);
   useEffect(() => { localStorage.setItem('kadam-cart', JSON.stringify(cart)); }, [cart]);
   useEffect(() => { localStorage.setItem('kadam-wishlist', JSON.stringify(wishlist)); }, [wishlist]);
-  useEffect(() => { localStorage.setItem('kadam-product-reviews', JSON.stringify(productReviews)); }, [productReviews]);
-  useEffect(() => { localStorage.setItem('kadam-accounts', JSON.stringify(accounts)); }, [accounts]);
-  useEffect(() => { if (activeUserId) localStorage.setItem('kadam-current-user', activeUserId); else localStorage.removeItem('kadam-current-user'); }, [activeUserId]);
   useEffect(() => { if (toast) { const timer = window.setTimeout(() => setToast(''), 2400); return () => window.clearTimeout(timer); } }, [toast]);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const activeUser = accounts.find((account) => account.id === activeUserId) ?? null;
   const searchResults = useMemo(() => products.filter((product) => `${product.name} ${product.style}`.toLowerCase().includes(query.toLowerCase())), [query]);
 
   const navigate = (destination: string) => { setPage(destination); setMobileOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -177,39 +105,6 @@ function App() {
   const addToCart = (product: Product, size = 8) => { setCart((current) => { const match = current.find((item) => item.id === product.id && item.size === size); return match ? current.map((item) => item === match ? { ...item, quantity: item.quantity + 1 } : item) : [...current, { ...product, size, quantity: 1 }]; }); setToast(`${product.name} added to cart`); setDrawerOpen(true); };
   const changeQuantity = (id: string, size: number, change: number) => setCart((current) => current.map((item) => item.id === id && item.size === size ? { ...item, quantity: Math.max(1, item.quantity + change) } : item));
   const removeFromCart = (id: string, size: number) => setCart((current) => current.filter((item) => !(item.id === id && item.size === size)));
-  const submitReview = (productId: string, name: string, rating: number, text: string) => { setProductReviews((current) => ({ ...current, [productId]: [...(current[productId] ?? []), { id: `${productId}-${Date.now()}`, name, rating, text, createdAt: new Date().toISOString() }] })); setToast('Review submitted'); };
-  const clearCart = () => setCart([]);
-  const saveAddress = (address: Omit<SavedAddress, 'id'> & { id?: string }) => {
-    if (!activeUser) return;
-    setAccounts((current) => current.map((account) => {
-      if (account.id !== activeUser.id) return account;
-      const id = address.id || `address-${Date.now()}`;
-      const wasDefault = account.addresses.some((item) => item.id === id && item.isDefault);
-      const nextAddress: SavedAddress = { ...address, id, isDefault: address.isDefault || wasDefault || account.addresses.length === 0 };
-      const addresses = account.addresses
-        .filter((item) => item.id !== id)
-        .map((item) => nextAddress.isDefault ? { ...item, isDefault: false } : item);
-      const updatedAddresses = [...addresses, nextAddress];
-      if (!updatedAddresses.some((item) => item.isDefault)) updatedAddresses[0] = { ...updatedAddresses[0], isDefault: true };
-      return { ...account, addresses: updatedAddresses };
-    }));
-  };
-  const updateAddressDefault = (addressId: string) => {
-    if (!activeUser) return;
-    setAccounts((current) => current.map((account) => account.id !== activeUser.id ? account : {
-      ...account,
-      addresses: account.addresses.map((address) => ({ ...address, isDefault: address.id === addressId })),
-    }));
-  };
-  const deleteAddress = (addressId: string) => {
-    if (!activeUser) return;
-    setAccounts((current) => current.map((account) => {
-      if (account.id !== activeUser.id) return account;
-      const addresses = account.addresses.filter((address) => address.id !== addressId);
-      if (addresses.length && !addresses.some((address) => address.isDefault)) addresses[0] = { ...addresses[0], isDefault: true };
-      return { ...account, addresses };
-    }));
-  };
 
   return (
     <div className={dark ? 'app dark' : 'app'}>
@@ -223,7 +118,7 @@ function App() {
         </nav>
         <div className="nav-actions">
           <button className="icon-button" aria-label="Search" onClick={() => setSearchOpen(!searchOpen)}><Search size={18} /></button>
-          <button className="icon-button account-nav" aria-label={activeUser ? `Account: ${activeUser.name}` : 'Account'} title={activeUser ? activeUser.name : 'Account'} onClick={() => navigate('account')}><UserRound size={18} />{activeUser && <span>{activeUser.name.split(' ')[0]}</span>}</button>
+          <button className="icon-button hide-mobile" aria-label="Account" onClick={() => navigate('account')}><UserRound size={18} /></button>
           <button className="icon-button" aria-label="Wishlist" onClick={() => navigate('wishlist')}><Heart size={18} fill={wishlist.length ? 'currentColor' : 'none'} /></button>
           <button className="bag-button" aria-label="Open cart" onClick={() => setDrawerOpen(true)}><ShoppingBag size={18} /><b>{cartCount}</b></button>
           <button className="theme-toggle" onClick={() => setDark(!dark)} aria-label="Toggle theme"><span className={dark ? 'sun' : 'moon'} /></button>
@@ -233,16 +128,15 @@ function App() {
 
       {page === 'home' && <Home navigate={navigate} products={products} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} dark={dark} />}
       {page === 'shop' && <Shop products={products} navigate={navigate} toggleWishlist={toggleWishlist} wishlist={wishlist} addToCart={addToCart} />}
-      {page.startsWith('product/') && <><ProductPage product={selectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} wishlist={wishlist} navigate={navigate} /><ProductReviews key={selectedProduct.id} product={selectedProduct} reviews={productReviews[selectedProduct.id] ?? []} submitReview={submitReview} /></>}
+      {page.startsWith('product/') && <ProductPage product={selectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} wishlist={wishlist} navigate={navigate} />}
       {page === 'art-stories' && <ArtStories navigate={navigate} />}
       {page === 'lookbook' && <Lookbook products={products} />}
       {page === 'our-story' && <OurStory navigate={navigate} />}
       {page === 'customize' && <Customizer addToCart={addToCart} />}
       {page === 'wishlist' && <Wishlist products={products.filter((product) => wishlist.includes(product.id))} navigate={navigate} toggleWishlist={toggleWishlist} addToCart={addToCart} />}
       {page === 'cart' && <CartPage cart={cart} subtotal={subtotal} changeQuantity={changeQuantity} removeFromCart={removeFromCart} navigate={navigate} />}
-      {page === 'checkout' && <CheckoutWithClearCart subtotal={subtotal} cart={cart} navigate={navigate} onPlaceOrder={clearCart} user={activeUser} saveAddress={saveAddress} />}
-      {page === 'returns' && <ReturnPolicy navigate={navigate} />}
-      {page === 'account' && <Account navigate={navigate} user={activeUser} onLogin={(email, password) => { const match = accounts.find((account) => account.email.toLowerCase() === email.trim().toLowerCase() && account.password === password); if (!match) return 'Email or password is incorrect.'; setActiveUserId(match.id); return ''; }} onSignup={(name, email, password) => { if (accounts.some((account) => account.email.toLowerCase() === email.trim().toLowerCase())) return 'An account with this email already exists.'; const account = { id: `user-${Date.now()}`, name: name.trim(), email: email.trim(), password, addresses: [] }; setAccounts((current) => [...current, account]); setActiveUserId(account.id); return ''; }} onLogout={() => setActiveUserId('')} saveAddress={saveAddress} setDefaultAddress={updateAddressDefault} deleteAddress={deleteAddress} />}
+      {page === 'checkout' && <Checkout subtotal={subtotal} cart={cart} navigate={navigate} />}
+      {page === 'account' && <Account navigate={navigate} />}
 
       <Footer navigate={navigate} />
       {drawerOpen && <CartDrawer cart={cart} subtotal={subtotal} changeQuantity={changeQuantity} removeFromCart={removeFromCart} navigate={navigate} close={() => setDrawerOpen(false)} />}
@@ -296,11 +190,7 @@ function Lookbook({ products: items }: { products: Product[] }) {
   return <main className="lookbook-page"><div className="lookbook-hero"><img src={signature.lifestyleImage} alt="KADAM SIGNATURE styled for the KADAM lookbook" /><div><p className="eyebrow">The KADAM lookbook</p><h1>Step into<br /><em>the story.</em></h1></div></div><div className="lookbook-intro"><p>Traditional art, contemporary steps. Meet the six KADAM stories through the people and places that bring them to life.</p><span>01 — 06</span></div><div className="lookbook-mosaic">{items.map((product) => <img key={product.id} className="lifestyle-crop" src={product.lifestyleImage} alt={`${product.name} lifestyle story`} loading="lazy" />)}<div className="mosaic-quote">“The best stories<br /><em>are lived in.</em>”</div><div className="lookbook-chapters"><span>01 / 06</span><strong>KADAM DHARA — Warli</strong><span>02 / 06</span><strong>KADAM RANG — Madhubani</strong><span>03 / 06</span><strong>KADAM VAN — Gond</strong><span>04 / 06</span><strong>KADAM CHITRA — Pattachitra</strong><span>05 / 06</span><strong>KADAM ROOH — Kalamkari</strong><span>06 / 06</span><strong>KADAM SIGNATURE</strong></div></div></main>;
 }
 
-function OurStory({ navigate }: { navigate: (page: string) => void }) { return <main className="our-story page-shell"><div className="page-hero"><p className="eyebrow">The house of KADAM</p><h1>Our <em>story.</em></h1><p>Indian art has always told stories. KADAM gives those stories a new way to walk.</p></div><div className="story-timeline">{['Indian art', 'Culture', 'Inspiration', 'Design', 'KADAM'].map((item, index) => <div className={index === 4 ? 'timeline-item last' : 'timeline-item'} key={item}><span>0{index + 1}</span><div><h2>{item}</h2><p>{index === 0 ? 'A visual inheritance passed from one hand to another.' : index === 1 ? 'The details that make a place feel like home.' : index === 2 ? 'Looking closer at the lines, shapes and stories around us.' : index === 3 ? 'Translating memory into a silhouette for now.' : 'A sneaker with somewhere to go.'}</p></div></div>)}</div><section className="philosophy"><div><p className="eyebrow">A considered approach</p><h2>Not heritage<br /><em>preserved.</em><br />Heritage in motion.</h2></div><div><p>KADAM exists at the meeting point of two energies: the patience of traditional making and the restless rhythm of contemporary life.</p><p>We work with visual languages rooted in India, not to replicate them, but to let their spirit travel. On pavements, through train stations, into the everyday.</p><div className="principles"><span>Thoughtful packaging</span><span>Durable construction</span><span>Designed for long-term wear</span></div><button className="button primary" onClick={() => navigate('shop')}>Find your pair <ArrowRight size={16} /></button></div></section><section className="story-visual-panel"><div className="story-feature-image"><img src="/images/art/warli.jpg" alt="Indian art visual story" /></div><div className="story-feature-copy"><p className="eyebrow">Our story</p><h3>Indian art, shaped for the street.</h3><p>We begin with patterns, symbols and memory. From there, we turn visual language into a form that moves with contemporary life.</p></div></section><section className="story-visual-grid"><div className="story-visual-card large"><img src="/images/art/gond.jpg" alt="Gond-inspired art" /><div><span>Indian art</span><strong>Pattern. Memory. Motion.</strong></div></div><div className="story-visual-card"><img src="/images/art/kalamkari.jpg" alt="Kalamkari-inspired art" /><div><span>Art</span><strong>Hand-drawn rhythm</strong></div></div></section><section className="story-steps"><div className="story-step"><span>01</span><p>Art / motif</p></div><div className="story-step"><span>02</span><p>Interpretation</p></div><div className="story-step"><span>03</span><p>KADAM sneaker</p></div></section><section className="story-collection"><div className="section-heading compact"><div><p className="eyebrow">The collection</p><h2>Selected<br /><em>stories.</em></h2></div></div><div className="story-collection-grid">{products.filter((product) => ['surya', 'floral', 'shiva', 'forest', 'monsoon'].includes(product.id)).map((product) => <button key={product.id} className="story-product-card" onClick={() => navigate(`product/${product.id}`)}><img src={product.image} alt={product.name} /><div><strong>{product.name}</strong><span>{product.style} / India</span></div></button>)}</div></section></main>; }
-
-function ReturnPolicy({ navigate }: { navigate: (page: string) => void }) {
-  return <main className="page-shell return-policy-page"><div className="page-hero compact"><p className="eyebrow">Support</p><h1>Return <em>policy.</em></h1></div><div className="return-policy"><p>Returns are accepted within 7 days of delivery. To be eligible, products must be unused and unworn, in original condition, and returned in their original packaging with all tags and accessories included.</p><section className="return-policy-item"><h2>Request a return</h2><p>Contact KADAM support to request a return and share your order details. Items that are damaged, worn, or altered after delivery may not be eligible.</p></section><section className="return-policy-item"><h2>Inspection and refunds</h2><p>Once the returned product is received and inspected, the return will be processed. Refunds, where applicable, will be issued to the original payment method.</p></section><section className="return-policy-item"><h2>Size exchanges</h2><p>For size issues, contact KADAM support to request an exchange, subject to availability.</p></section><button className="button primary" onClick={() => navigate('shop')}>Continue shopping <ArrowRight size={16} /></button></div></main>;
-}
+function OurStory({ navigate }: { navigate: (page: string) => void }) { return <main className="our-story page-shell"><div className="page-hero"><p className="eyebrow">The house of KADAM</p><h1>Our <em>story.</em></h1><p>Indian art has always told stories. KADAM gives those stories a new way to walk.</p></div><div className="story-timeline">{['Indian art', 'Culture', 'Inspiration', 'Design', 'KADAM'].map((item, index) => <div className={index === 4 ? 'timeline-item last' : 'timeline-item'} key={item}><span>0{index + 1}</span><div><h2>{item}</h2><p>{index === 0 ? 'A visual inheritance passed from one hand to another.' : index === 1 ? 'The details that make a place feel like home.' : index === 2 ? 'Looking closer at the lines, shapes and stories around us.' : index === 3 ? 'Translating memory into a silhouette for now.' : 'A sneaker with somewhere to go.'}</p></div></div>)}</div><section className="philosophy"><div><p className="eyebrow">A considered approach</p><h2>Not heritage<br /><em>preserved.</em><br />Heritage in motion.</h2></div><div><p>KADAM exists at the meeting point of two energies: the patience of traditional making and the restless rhythm of contemporary life.</p><p>We work with visual languages rooted in India, not to replicate them, but to let their spirit travel. On pavements, through train stations, into the everyday.</p><div className="principles"><span>Thoughtful packaging</span><span>Durable construction</span><span>Designed for long-term wear</span></div><button className="button primary" onClick={() => navigate('shop')}>Find your pair <ArrowRight size={16} /></button></div></section></main>; }
 
 function Customizer({ addToCart }: { addToCart: (product: Product) => void }) { const [colour, setColour] = useState('Cream'); const [style, setStyle] = useState('Warli'); const [laces, setLaces] = useState('Maroon'); const [sole, setSole] = useState('Brown'); const choices = [['Sneaker colour', ['Cream', 'Black', 'Tan'], colour, setColour], ['Art style', ['Warli', 'Madhubani', 'Gond', 'Kalamkari'], style, setStyle], ['Laces', ['Cream', 'Maroon', 'Brown'], laces, setLaces], ['Sole', ['Cream', 'Brown', 'Black'], sole, setSole]] as const; return <main className="customizer page-shell"><div className="page-hero"><p className="eyebrow">The personal edition</p><h1>Create your<br /><em>KADAM.</em></h1><p>Make the story yours.</p></div><div className="custom-layout"><div className="custom-preview"><div className={`custom-shoe large ${colour.toLowerCase()} ${sole.toLowerCase()}`}><div className="shoe-top" /><div className="shoe-sole" /><span>{style}</span></div><div className="preview-caption"><span>YOUR KADAM</span><strong>01 / 01</strong></div></div><div className="custom-controls">{choices.map(([label, options, value, setter]) => <div className="choice-group" key={label}><div className="choice-heading"><strong>{label}</strong><span>{value}</span></div><div className="choice-options">{options.map((option) => <button className={value === option ? 'selected' : ''} key={option} onClick={() => setter(option)}>{option}{value === option && <Check size={14} />}</button>)}</div></div>)}<div className="custom-total"><span>YOUR KADAM</span><strong>{money(3499)}</strong></div><button className="button primary full" onClick={() => addToCart({ ...products[5], name: `KADAM CUSTOM / ${style.toUpperCase()}` })}>Add to cart <ShoppingBag size={16} /></button><button className="reset-button" onClick={() => { setColour('Cream'); setStyle('Warli'); setLaces('Maroon'); setSole('Brown'); }}>Reset configuration</button></div></div></main>; }
 
@@ -314,147 +204,8 @@ function CartPage({ cart, subtotal, changeQuantity, removeFromCart, navigate }: 
 
 function Checkout({ subtotal, cart, navigate }: { subtotal: number; cart: CartItem[]; navigate: (page: string) => void }) { const [done, setDone] = useState(false); if (done) return <main className="confirmation page-shell"><div className="confirmation-mark"><Check size={34} /></div><p className="eyebrow">Order confirmed / #KD-26091</p><h1>Your KADAM<br /><em>is on its way.</em></h1><p>Thank you for giving the story somewhere new to go. We’ll keep you posted as your order travels to you.</p><button className="button primary" onClick={() => navigate('shop')}>Continue exploring <ArrowRight size={16} /></button></main>; return <main className="page-shell checkout"><div className="page-hero compact"><p className="eyebrow">A considered finish</p><h1>Check <em>out.</em></h1></div><div className="checkout-layout"><form className="checkout-form" onSubmit={(event) => { event.preventDefault(); setDone(true); }}><CheckoutSection title="Contact"><div className="form-grid"><label>Full name<input required placeholder="Your name" /></label><label>Email<input required type="email" placeholder="you@example.com" /></label><label>Phone<input required placeholder="+91 00000 00000" /></label></div></CheckoutSection><CheckoutSection title="Delivery"><div className="form-grid"><label>Address<input required placeholder="Flat, building, street" /></label><label>City<input required placeholder="Mumbai" /></label><label>State<input required placeholder="Maharashtra" /></label><label>Pincode<input required placeholder="400001" /></label></div></CheckoutSection><CheckoutSection title="Payment"><div className="payment-options"><label><input type="radio" name="payment" defaultChecked /> UPI <span>Recommended</span></label><label><input type="radio" name="payment" /> Card</label><label><input type="radio" name="payment" /> Cash on delivery</label></div></CheckoutSection><button className="button primary" type="submit">Place order <ArrowRight size={16} /></button></form><div className="checkout-summary"><h3>Order summary</h3>{cart.map((item) => <div className="summary-line" key={`${item.id}-${item.size}`}><span>{item.name}<small>Size {item.size} × {item.quantity}</small></span><strong>{money(item.price * item.quantity)}</strong></div>)}<div className="summary-total"><span>Total</span><strong>{money(subtotal)}</strong></div></div></div></main>; }
 function CheckoutSection({ title, children }: { title: string; children: React.ReactNode }) { return <section className="checkout-section"><h3>{title}</h3>{children}</section>; }
-type AddressDraft = Omit<SavedAddress, 'id'>;
+function Account({ navigate }: { navigate: (page: string) => void }) { return <main className="page-shell account"><div className="page-hero"><p className="eyebrow">The KADAM club</p><h1>Your <em>account.</em></h1><p>Sign in to keep your orders and saved pieces close.</p></div><div className="account-box"><UserRound size={28} /><h2>Welcome to KADAM</h2><p>Account access is ready for your next chapter.</p><button className="button primary" onClick={() => navigate('shop')}>Continue shopping <ArrowRight size={16} /></button></div></main>; }
 
-const emptyAddress = (fullName = ''): AddressDraft => ({ fullName, phone: '', building: '', street: '', city: '', state: '', pin: '', isDefault: false });
-
-function AddressFields({ value, onChange }: { value: AddressDraft; onChange: (value: AddressDraft) => void }) {
-  const update = (field: keyof AddressDraft, next: string | boolean) => onChange({ ...value, [field]: next });
-  return <div className="form-grid address-form-grid">
-    <label>Full name<input required autoComplete="name" value={value.fullName} onChange={(event) => update('fullName', event.target.value)} placeholder="Your name" /></label>
-    <label>Phone number<input required type="tel" autoComplete="tel" minLength={8} maxLength={18} value={value.phone} onChange={(event) => update('phone', event.target.value)} placeholder="+91 00000 00000" /></label>
-    <label>House / Flat / Building<input required autoComplete="address-line1" value={value.building} onChange={(event) => update('building', event.target.value)} placeholder="Flat, building or house" /></label>
-    <label>Street / Area<input required autoComplete="address-line2" value={value.street} onChange={(event) => update('street', event.target.value)} placeholder="Street or area" /></label>
-    <label>City<input required autoComplete="address-level2" value={value.city} onChange={(event) => update('city', event.target.value)} placeholder="Mumbai" /></label>
-    <label>State<input required autoComplete="address-level1" value={value.state} onChange={(event) => update('state', event.target.value)} placeholder="Maharashtra" /></label>
-    <label>PIN code<input required inputMode="numeric" autoComplete="postal-code" pattern="[0-9]{6}" maxLength={6} value={value.pin} onChange={(event) => update('pin', event.target.value)} placeholder="400001" /></label>
-  </div>;
-}
-
-function AddressText({ address }: { address: SavedAddress }) {
-  return <p className="address-text">{address.fullName}<br />{address.building}, {address.street}<br />{address.city}, {address.state} {address.pin}<br />{address.phone}</p>;
-}
-
-function Account({ navigate, user, onLogin, onSignup, onLogout, saveAddress, setDefaultAddress, deleteAddress }: {
-  navigate: (page: string) => void;
-  user: UserAccount | null;
-  onLogin: (email: string, password: string) => string;
-  onSignup: (name: string, email: string, password: string) => string;
-  onLogout: () => void;
-  saveAddress: (address: Omit<SavedAddress, 'id'> & { id?: string }) => void;
-  setDefaultAddress: (addressId: string) => void;
-  deleteAddress: (addressId: string) => void;
-}) {
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [editingAddressId, setEditingAddressId] = useState('');
-  const [addressFormOpen, setAddressFormOpen] = useState(false);
-  const [addressDraft, setAddressDraft] = useState<AddressDraft>(emptyAddress());
-
-  const submitAuth = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError('');
-    if (mode === 'signup') {
-      if (password.length < 8) { setError('Use a password with at least 8 characters.'); return; }
-      if (password !== confirmPassword) { setError('Your passwords do not match.'); return; }
-      const result = onSignup(name, email, password);
-      if (result) setError(result);
-      return;
-    }
-    const result = onLogin(email, password);
-    if (result) setError(result);
-  };
-
-  const startAddress = (address?: SavedAddress) => {
-    setEditingAddressId(address?.id ?? '');
-    setAddressDraft(address ? { ...address } : emptyAddress(user?.name));
-    setAddressFormOpen(true);
-  };
-
-  const submitAddress = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    saveAddress({ ...addressDraft, id: editingAddressId || undefined, isDefault: addressDraft.isDefault || !user?.addresses.length });
-    setAddressFormOpen(false);
-    setEditingAddressId('');
-    setAddressDraft(emptyAddress(user?.name));
-  };
-
-  return <main className="page-shell account"><div className="page-hero"><p className="eyebrow">The KADAM club</p><h1>Your <em>account.</em></h1><p>{user ? 'Your details and saved delivery addresses.' : 'Sign in to keep your details and delivery addresses close.'}</p></div>
-    {!user ? <section className="account-auth"><div className="account-auth-heading"><UserRound size={24} /><div><p className="eyebrow">Welcome to KADAM</p><h2>{mode === 'login' ? 'Sign in.' : 'Create an account.'}</h2></div></div>
-      <div className="account-tabs" role="tablist"><button type="button" role="tab" aria-selected={mode === 'login'} className={mode === 'login' ? 'selected' : ''} onClick={() => { setMode('login'); setError(''); }}>Login</button><button type="button" role="tab" aria-selected={mode === 'signup'} className={mode === 'signup' ? 'selected' : ''} onClick={() => { setMode('signup'); setError(''); }}>Sign Up</button></div>
-      <form className="account-form" onSubmit={submitAuth}>
-        {mode === 'signup' && <label>Full name<input required autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Your full name" /></label>}
-        <label>Email<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" /></label>
-        <label>Password<input required type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters" /></label>
-        {mode === 'signup' && <label>Confirm password<input required type="password" autoComplete="new-password" minLength={8} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Enter your password again" /></label>}
-        {error && <p className="form-error" role="alert">{error}</p>}
-        <button className="button primary full" type="submit">{mode === 'login' ? 'Login' : 'Create Account'} <ArrowRight size={16} /></button>
-      </form>
-    </section> : <div className="account-content">
-      <section className="account-panel profile-panel"><div><p className="eyebrow">Profile information</p><h2>{user.name}</h2><p>{user.email}</p></div><button className="outline-button account-logout" onClick={onLogout}>Logout</button></section>
-      <section className="account-panel"><div className="account-section-heading"><div><p className="eyebrow">Your delivery details</p><h2>Saved addresses</h2></div><button className="text-button" onClick={() => startAddress()}>Add address <Plus size={15} /></button></div>
-        {addressFormOpen && <form className="address-editor" onSubmit={submitAddress}><h3>{editingAddressId ? 'Edit address' : 'New address'}</h3><AddressFields value={addressDraft} onChange={setAddressDraft} /><label className="checkbox-line"><input type="checkbox" checked={addressDraft.isDefault} onChange={(event) => setAddressDraft({ ...addressDraft, isDefault: event.target.checked })} /> Make this my default address</label><div className="address-form-actions"><button className="button primary" type="submit">Save address <Check size={15} /></button><button className="text-button" type="button" onClick={() => setAddressFormOpen(false)}>Cancel</button></div></form>}
-        {user.addresses.length ? <div className="address-list">{user.addresses.map((address) => <article className="saved-address" key={address.id}><div className="saved-address-heading"><strong>{address.fullName}</strong>{address.isDefault && <span className="default-label">Default address</span>}</div><AddressText address={address} /><div className="saved-address-actions"><button onClick={() => startAddress(address)}>Edit</button>{!address.isDefault && <button onClick={() => setDefaultAddress(address.id)}>Make default</button>}<button onClick={() => deleteAddress(address.id)}>Delete</button></div></article>)}</div> : !addressFormOpen && <p className="account-empty">No saved addresses yet. Add one for a quicker checkout next time.</p>}
-      </section>
-      <button className="text-button account-continue" onClick={() => navigate('shop')}>Continue shopping <ArrowRight size={15} /></button>
-    </div>}
-  </main>;
-}
-
-function Footer({ navigate }: { navigate: (page: string) => void }) { return <footer><div className="footer-top"><div><button className="wordmark footer-logo" onClick={() => navigate('home')}>KADAM<span>▲</span></button><p>India, reimagined.</p><div className="socials"><Instagram size={17} /><span>pinterest</span></div></div><div className="footer-news"><p className="eyebrow">Stay in the loop</p><h3>New drops, stories<br />and KADAM updates.</h3><div className="newsletter"><input placeholder="Enter your email" type="email" /><button>Join</button></div></div><div className="footer-links"><div><span>Shop</span><button onClick={() => navigate('shop')}>Signature collection</button><button onClick={() => navigate('shop')}>New arrivals</button><button onClick={() => navigate('shop')}>Best sellers</button></div><div><span>About</span><button onClick={() => navigate('our-story')}>Our story</button><button onClick={() => navigate('art-stories')}>Art stories</button><button onClick={() => navigate('lookbook')}>Lookbook</button></div><div><span>Support</span><button>Contact</button><button>Shipping</button><button onClick={() => navigate('returns')}>Return Policy</button></div></div></div><div className="footer-bottom"><span>© 2026 KADAM</span><span>Made with intention in India</span><span>Privacy / Terms</span></div></footer>; }
-
-function ProductReviews({ product, reviews, submitReview }: { product: Product; reviews: Review[]; submitReview: (productId: string, name: string, rating: number, text: string) => void }) {
-  const [formOpen, setFormOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [rating, setRating] = useState(5);
-  const [text, setText] = useState('');
-  const average = reviews.length ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length : product.rating;
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const trimmedName = name.trim();
-    const trimmedText = text.trim();
-    if (!trimmedName || !trimmedText) return;
-    submitReview(product.id, trimmedName, rating, trimmedText);
-    setName('');
-    setRating(5);
-    setText('');
-    setFormOpen(false);
-  };
-
-  return <section className="reviews-panel page-shell"><div className="reviews-header"><div><p className="eyebrow">Customer Reviews</p><h2>What people are saying</h2></div><div className="reviews-summary"><div className="star-row" aria-label={`${average.toFixed(1)} out of 5 stars`}>{Array.from({ length: 5 }, (_, index) => <Star key={index} size={15} fill={index < Math.round(average) ? 'currentColor' : 'none'} />)}</div><strong>{average.toFixed(1)} / 5</strong><span>{reviews.length} review{reviews.length === 1 ? '' : 's'}</span></div></div><div className="reviews-layout"><div className="review-list">{reviews.length ? reviews.map((review) => <article className="review-item" key={review.id}><div className="review-top"><strong>{review.name}</strong><span>{new Date(review.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span></div><div className="star-row" aria-label={`${review.rating} out of 5 stars`}>{Array.from({ length: 5 }, (_, index) => <Star key={`${review.id}-${index}`} size={12} fill={index < review.rating ? 'currentColor' : 'none'} />)}</div><p>{review.text}</p></article>) : <p className="empty-review">No reviews yet. Be the first to share yours.</p>}</div><button className="button primary write-review-button" type="button" onClick={() => setFormOpen(true)}>Write a Review <ArrowRight size={15} /></button></div>{formOpen && <div className="review-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setFormOpen(false); }}><section className="review-modal" role="dialog" aria-modal="true" aria-labelledby="review-modal-title"><div className="review-modal-header"><div><p className="eyebrow">Share your experience</p><h2 id="review-modal-title">Write a Review</h2></div><button className="icon-button" type="button" aria-label="Close review form" onClick={() => setFormOpen(false)}><X size={18} /></button></div><form className="review-form" onSubmit={handleSubmit}><label>Name<input autoFocus value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" required /></label><label>Rating<select value={rating} onChange={(event) => setRating(Number(event.target.value))}><option value={5}>5 stars</option><option value={4}>4 stars</option><option value={3}>3 stars</option><option value={2}>2 stars</option><option value={1}>1 star</option></select></label><label>Review<textarea value={text} onChange={(event) => setText(event.target.value)} rows={4} placeholder="Tell us what you think..." required /></label><button className="button primary" type="submit">Submit Review <ArrowRight size={15} /></button></form></section></div>}</section>;
-}
-
-function CheckoutWithClearCart({ subtotal, cart, navigate, onPlaceOrder, user, saveAddress }: { subtotal: number; cart: CartItem[]; navigate: (page: string) => void; onPlaceOrder: () => void; user: UserAccount | null; saveAddress: (address: Omit<SavedAddress, 'id'> & { id?: string }) => void }) {
-  const [done, setDone] = useState(false);
-  const addresses = user?.addresses ?? [];
-  const [selectedAddressId, setSelectedAddressId] = useState(() => addresses.find((address) => address.isDefault)?.id ?? addresses[0]?.id ?? '');
-  const [changingAddress, setChangingAddress] = useState(false);
-  const [addingAddress, setAddingAddress] = useState(false);
-  const [saveForLater, setSaveForLater] = useState(false);
-  const [addressDraft, setAddressDraft] = useState<AddressDraft>(() => emptyAddress(user?.name));
-  const selectedAddress = addresses.find((address) => address.id === selectedAddressId) ?? addresses.find((address) => address.isDefault) ?? addresses[0] ?? null;
-
-  if (done) return <main className="confirmation page-shell"><div className="confirmation-mark"><Check size={34} /></div><p className="eyebrow">Order confirmed / #KD-26091</p><h1>Your KADAM<br /><em>is on its way.</em></h1><p>Thank you for giving the story somewhere new to go. We’ll keep you posted as your order travels to you.</p><button className="button primary" onClick={() => navigate('shop')}>Continue exploring <ArrowRight size={16} /></button></main>;
-
-  const placeOrder = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (user && (addingAddress || !selectedAddress) && saveForLater) {
-      saveAddress({ ...addressDraft, isDefault: !addresses.length });
-    }
-    onPlaceOrder();
-    setDone(true);
-  };
-
-  return <main className="page-shell checkout"><div className="page-hero compact"><p className="eyebrow">A considered finish</p><h1>Check <em>out.</em></h1></div><form className="checkout-layout" onSubmit={placeOrder}><div className="checkout-form">
-    <CheckoutSection title="Contact">{user ? <div className="checkout-contact"><strong>{user.name}</strong><span>{user.email}</span>{selectedAddress && !addingAddress && <span>{selectedAddress.phone}</span>}</div> : <div className="form-grid"><label>Full name<input required autoComplete="name" placeholder="Your name" /></label><label>Email<input required type="email" autoComplete="email" placeholder="you@example.com" /></label><label>Phone<input required type="tel" autoComplete="tel" placeholder="+91 00000 00000" /></label></div>}</CheckoutSection>
-    <CheckoutSection title="Delivery">{selectedAddress && !addingAddress ? <div className="checkout-address"><div className="checkout-address-heading"><strong>{selectedAddress.fullName}</strong>{selectedAddress.isDefault && <span className="default-label">Default address</span>}</div><AddressText address={selectedAddress} /><div className="checkout-address-actions"><button className="text-button" type="button" onClick={() => setChangingAddress(!changingAddress)}>{changingAddress ? 'Close addresses' : 'Change address'}</button><button className="text-button" type="button" onClick={() => { setAddingAddress(true); setChangingAddress(false); setAddressDraft(emptyAddress(user?.name)); setSaveForLater(true); }}>Add new address <Plus size={14} /></button></div>
-      {changingAddress && <div className="checkout-address-list">{addresses.map((address) => <label className="address-choice" key={address.id}><input type="radio" name="saved-address" checked={selectedAddress.id === address.id} onChange={() => { setSelectedAddressId(address.id); setChangingAddress(false); }} /><span><strong>{address.fullName}{address.isDefault ? ' · Default' : ''}</strong><small>{address.building}, {address.street}, {address.city}, {address.state} {address.pin}</small></span></label>)}</div>}</div> : <div className="checkout-new-address"><AddressFields value={addressDraft} onChange={setAddressDraft} />{user ? <label className="checkbox-line"><input type="checkbox" checked={saveForLater} onChange={(event) => setSaveForLater(event.target.checked)} /> Save this address for future orders</label> : <button className="text-button checkout-signin" type="button" onClick={() => navigate('account')}>Sign in to save addresses <ArrowRight size={14} /></button>}{selectedAddress && <button className="text-button" type="button" onClick={() => setAddingAddress(false)}>Back to saved address</button>}</div>}</CheckoutSection>
-    <CheckoutSection title="Payment"><div className="payment-options"><label><input type="radio" name="payment" value="upi" defaultChecked /> UPI <span>Recommended</span></label><label><input type="radio" name="payment" value="card" /> Card</label><label><input type="radio" name="payment" value="cod" /> Cash on delivery</label></div></CheckoutSection><button className="button primary" type="submit" disabled={!cart.length}>Place order <ArrowRight size={16} /></button></div><div className="checkout-sum"><h3>Summary</h3>{cart.map((item) => <div className="summary-line" key={`${item.id}-${item.size}`}><div><strong>{item.name}</strong><small>Size {item.size} · Qty {item.quantity}</small></div><strong>{money(item.price * item.quantity)}</strong></div>)}<div className="summary-total"><span>Grand total</span><strong>{money(subtotal + (subtotal >= 2999 || subtotal === 0 ? 0 : 149))}</strong></div><button className="button primary full" type="submit" disabled={!cart.length}>Place order <ArrowRight size={16} /></button></div></form></main>;
-}
+function Footer({ navigate }: { navigate: (page: string) => void }) { return <footer><div className="footer-top"><div><button className="wordmark footer-logo" onClick={() => navigate('home')}>KADAM<span>▲</span></button><p>India, reimagined.</p><div className="socials"><Instagram size={17} /><span>pinterest</span></div></div><div className="footer-news"><p className="eyebrow">Stay in the loop</p><h3>New drops, stories<br />and KADAM updates.</h3><div className="newsletter"><input placeholder="Enter your email" type="email" /><button>Join</button></div></div><div className="footer-links"><div><span>Shop</span><button onClick={() => navigate('shop')}>Signature collection</button><button onClick={() => navigate('shop')}>New arrivals</button><button onClick={() => navigate('shop')}>Best sellers</button></div><div><span>About</span><button onClick={() => navigate('our-story')}>Our story</button><button onClick={() => navigate('art-stories')}>Art stories</button><button onClick={() => navigate('lookbook')}>Lookbook</button></div><div><span>Support</span><button>Contact</button><button>Shipping</button><button>Returns</button></div></div></div><div className="footer-bottom"><span>© 2026 KADAM</span><span>Made with intention in India</span><span>Privacy / Terms</span></div></footer>; }
 
 export default App;
