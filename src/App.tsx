@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import OurStoryPage from './OurStoryPage';
 import {
   ArrowRight,
   Check,
@@ -268,7 +269,7 @@ function App() {
       {page.startsWith('product/') && <><ProductPage product={selectedProduct} addToCart={addToCart} toggleWishlist={toggleWishlist} wishlist={wishlist} navigate={navigate} /><ProductReviews key={selectedProduct.id} product={selectedProduct} reviews={productReviews[selectedProduct.id] ?? []} submitReview={submitReview} /></>}
       {page === 'art-stories' && <ArtStories navigate={navigate} />}
       {page === 'lookbook' && <Lookbook products={products} />}
-      {page === 'our-story' && <OurStory navigate={navigate} />}
+      {page === 'our-story' && <OurStoryPage navigate={navigate} />}
       {page === 'customize' && <Customizer addToCart={addToCart} />}
       {page === 'wishlist' && <Wishlist products={products.filter((product) => wishlist.includes(product.id))} navigate={navigate} toggleWishlist={toggleWishlist} addToCart={addToCart} />}
       {page === 'cart' && <CartPage cart={cart} subtotal={subtotal} changeQuantity={changeQuantity} removeFromCart={removeFromCart} navigate={navigate} />}
@@ -334,7 +335,39 @@ function ProductPage({ product, addToCart, toggleWishlist, wishlist, navigate }:
   return <main className="product-page page-shell"><button className="back-button" onClick={() => navigate('shop')}><ChevronLeft size={16} /> Back to shop</button><div className="product-detail"><div className="product-gallery"><div className="gallery-main"><img className={`collection-image ${product.id}`} src={product.image} alt={`${product.name} product view`} /><span>01 / 04</span></div><div className="gallery-thumbs">{galleryImages.map((image, index) => <button key={index}><img src={image} alt={`${product.name} view ${index + 1}`} /></button>)}</div></div><div className="product-detail-copy"><p className="eyebrow">{product.style} / Limited edition</p><h1>{product.name}</h1><p className="detail-subtitle">Inspired by {product.style} art</p><div className="rating-line"><span><Star size={14} fill="currentColor" /> {product.rating}</span><span className="muted">12 sample reviews</span></div><div className="detail-price">{money(product.price)}</div><p className="detail-description">{product.description} Every pair is designed in India, finished by hand and made for wherever the day takes you.</p><div className="size-label"><strong>Select size</strong><button>Size guide <ArrowRight size={13} /></button></div><div className="sizes">{product.sizes.map((item) => <button className={size === item ? 'selected' : ''} key={item} onClick={() => setSize(item)}>{item}</button>)}</div><div className="detail-actions"><button className="button primary" onClick={() => addToCart(product, size)}>Add to cart <ShoppingBag size={16} /></button><button className="outline-button" aria-label="Add to wishlist" onClick={() => toggleWishlist(product.id)}><Heart size={17} fill={wishlist.includes(product.id) ? 'currentColor' : 'none'} /></button></div><div className="detail-note"><Check size={16} /><span>Free shipping on orders over ₹2,999<br /><small>Easy 7-day exchanges on unworn pairs.</small></span></div></div></div><div className="product-tabs">{['Product story', 'Art inspiration', 'Materials & details', 'Reviews'].map((item) => <button className={tab === item ? 'selected' : ''} key={item} onClick={() => setTab(item)}>{item}</button>)}<div className="tab-content"><p>{tab === 'Product story' && 'Dhara is a study in movement. Its hand-drawn figures trace the joy of coming together, bringing the warmth of a Warli village to a silhouette built for the city.'}{tab === 'Art inspiration' && 'Warli art comes from Maharashtra, where simple geometric forms create vivid stories of everyday life, harvests and celebration. We kept the linework honest and the palette close to earth.'}{tab === 'Materials & details' && 'Textured vegan leather upper, cushioned footbed, rubber outsole and cotton laces. Wipe clean with a soft cloth; store away from direct sunlight.'}{tab === 'Reviews' && '“Beautifully made and surprisingly comfortable from day one.” — Sample customer review\n\nDemo reviews are shown for this concept store and do not represent verified purchases.'}</p></div></div></main>;
 }
 
-function ArtStories({ navigate }: { navigate: (page: string) => void }) { return <main className="editorial-page page-shell"><div className="page-hero dark-hero"><p className="eyebrow">The visual language</p><h1>Art<br /><em>stories.</em></h1><p>Where India's stories meet contemporary design.<br />Five artistic traditions. Five perspectives. One new way forward.</p></div>{artStories.map((story, index) => { const product = products.find((p) => p.id === story.productId)!; const imageLeft = index % 2 === 0; return <section className={`art-spread ${imageLeft ? 'image-left' : 'image-right'}`} key={story.id}><div className="art-spread-number">0{index + 1} / 05</div>{imageLeft && <ArtSpreadImage story={story} />}<div className="art-spread-copy"><p className="eyebrow">{story.art} / {story.origin}</p><h2>{story.name}</h2><p className="art-spread-story">{story.story}</p><div className="art-spread-connector"><span>Traditional art</span><ArrowRight size={14} /><span>Design language</span><ArrowRight size={14} /><span>KADAM sneaker</span></div><div className="art-spread-sneaker" onClick={() => navigate(`product/${product.id}`)}><img className={`collection-image ${product.id}`} src={product.image} alt={`${product.name} sneaker inspired by ${story.art}`} loading="lazy" /><div><strong>{product.name}</strong><span>Inspired by {story.art}</span></div></div><button className="button primary" onClick={() => navigate(`product/${product.id}`)}>Explore {story.name} <ArrowRight size={15} /></button></div>{!imageLeft && <ArtSpreadImage story={story} />}</section>; })}<div className="art-stories-cta"><button className="button light" onClick={() => navigate('shop')}>Explore the collection <ArrowRight size={16} /></button></div></main>; }
+function ArtStories({ navigate }: { navigate: (page: string) => void }) {
+  return <main className="editorial-page page-shell">
+    <div className="page-hero dark-hero">
+      <div className="dark-hero-copy">
+        <p className="eyebrow">The visual language</p>
+        <h1>Art<br /><em>stories.</em></h1>
+        <p>Where India's stories meet contemporary design.<br />Five artistic traditions. Five perspectives. One new way forward.</p>
+      </div>
+      <img className="dark-hero-image" src="/images/our-story/dancer.jpg" alt="Dancer in traditional Indian attire" />
+    </div>
+    {artStories.map((story, index) => {
+      const product = products.find((p) => p.id === story.productId)!;
+      const imageLeft = index % 2 === 0;
+      return <section className={`art-spread ${imageLeft ? 'image-left' : 'image-right'}`} key={story.id}>
+        <div className="art-spread-number">0{index + 1} / 05</div>
+        {imageLeft && <ArtSpreadImage story={story} />}
+        <div className="art-spread-copy">
+          <p className="eyebrow">{story.art} / {story.origin}</p>
+          <h2>{story.name}</h2>
+          <p className="art-spread-story">{story.story}</p>
+          <div className="art-spread-connector"><span>Traditional art</span><ArrowRight size={14} /><span>Design language</span><ArrowRight size={14} /><span>KADAM sneaker</span></div>
+          <div className="art-spread-sneaker" onClick={() => navigate(`product/${product.id}`)}>
+            <img className={`collection-image ${product.id}`} src={product.image} alt={`${product.name} sneaker inspired by ${story.art}`} loading="lazy" />
+            <div><strong>{product.name}</strong><span>Inspired by {story.art}</span></div>
+          </div>
+          <button className="button primary" onClick={() => navigate(`product/${product.id}`)}>Explore {story.name} <ArrowRight size={15} /></button>
+        </div>
+        {!imageLeft && <ArtSpreadImage story={story} />}
+      </section>;
+    })}
+    <div className="art-stories-cta"><button className="button light" onClick={() => navigate('shop')}>Explore the collection <ArrowRight size={16} /></button></div>
+  </main>;
+}
 
 function ArtSpreadImage({ story }: { story: ArtStory }) { return <div className="art-spread-image"><img src={story.image} alt={`${story.art} traditional artwork from ${story.origin}`} loading="lazy" /><span className="art-spread-label">{story.art} / {story.origin}</span></div>; }
 
